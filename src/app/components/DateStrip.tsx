@@ -153,10 +153,15 @@ export function DateStrip({
                 }`}
               >
 
-                <div className="text-[48px] font-bold">
+                <div className="text-[48px] font-bold"> ${
+                  isSelected ? "text-black" : "text-muted-foreground"
+  }`
                   {String(date.getDate()).padStart(2, "0")}
                 </div>
                 <div className="text-[13px]">
+                  ${
+    isSelected ? "text-black" : "text-muted-foreground"
+  }
                   {getMonthName(date.getMonth())} {date.getFullYear()}
                 </div>
               </button>
@@ -174,20 +179,6 @@ export function DateStrip({
 
               </div>
             </div>
-            <div
-  className={`text-[48px] font-bold transition-colors ${
-    isSelected ? "text-black" : "text-muted-foreground"
-  }`}
->
-  {String(date.getDate()).padStart(2, "0")}
-</div>
-<div
-  className={`text-[13px] transition-colors ${
-    isSelected ? "text-black" : "text-muted-foreground"
-  }`}
->
-  {getMonthName(date.getMonth())} {date.getFullYear()}
-</div>
           );
         })}
       </div>
