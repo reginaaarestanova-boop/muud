@@ -1,0 +1,15 @@
+:root {
+  --font-main: 'Bellota', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  font-family: var(--font-main);
+  font-weight: 400;
+}
+h1, h2, h3, h4, button {
+  font-family: var(--font-main);
+  font-weight: 700;
+}
+p {
+  line-height: 1.45;
+}
