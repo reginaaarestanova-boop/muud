@@ -6,12 +6,12 @@ interface EmptyStateProps {
 
 export function EmptyState({ onAddNote, title }: EmptyStateProps) {
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center text-center">
       <h1
-        className="text-[18px] mb-4"
-        style={{ fontFamily: "var(--font-main)", fontWeight: 700 }}
+        className="text-[22px] leading-[28px] mb-6 text-foreground"
+        style={{ fontFamily: "var(--font-main)", fontWeight: 500 }}
       >
-        {title ?? "Как прошёл твой день?"}
+        {title}
       </h1>
 
       {/* Main Card - stretches to fill remaining space */}

@@ -270,7 +270,7 @@ export default function App() {
   ) : (
    <EmptyState
   onAddNote={() => setShowAddNote(true)}
-  title={selectedDate < today ? "Как прошёл этот день?" : undefined}
+  title={selectedDate < today ? "Как прошёл этот день?" : "Как прошёл твой день?"}
 />
   )}
 </div>
