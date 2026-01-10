@@ -152,10 +152,11 @@ export function DateStrip({
                   isSelected ? "bg-secondary" : "hover:bg-muted/10"
                 }`}
               >
-                <div className="text-[48px] color-#000 font-bold">
+
+                <div className="text-[48px] font-bold">
                   {String(date.getDate()).padStart(2, "0")}
                 </div>
-                <div className="text-[13px] color-#000">
+                <div className="text-[13px]">
                   {getMonthName(date.getMonth())} {date.getFullYear()}
                 </div>
               </button>
@@ -170,8 +171,23 @@ export function DateStrip({
                 ) : (
                   <div className="w-10 h-10 rounded-full border-2 border-dashed" />
                 )}
+
               </div>
             </div>
+            <div
+  className={`text-[48px] font-bold transition-colors ${
+    isSelected ? "text-black" : "text-muted-foreground"
+  }`}
+>
+  {String(date.getDate()).padStart(2, "0")}
+</div>
+<div
+  className={`text-[13px] transition-colors ${
+    isSelected ? "text-black" : "text-muted-foreground"
+  }`}
+>
+  {getMonthName(date.getMonth())} {date.getFullYear()}
+</div>
           );
         })}
       </div>
