@@ -182,5 +182,3 @@ export default function App() {
         <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
     </div>
-  );
-}
