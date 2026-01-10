@@ -140,47 +140,56 @@ export default function App() {
 
   /* UI */
   return (
-    <div className="h-screen w-full bg-background flex justify-center overflow-hidden">
-      <div className="w-full max-w-[400px] h-full flex flex-col">
+  <div className="h-screen w-full bg-background flex justify-center overflow-hidden">
+    <div className="w-full max-w-[400px] h-full flex flex-col">
 
-        <div className="flex-1 overflow-y-auto">
-          <DateStrip
-            selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
-            diaryData={diaryEntries}
-          />
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto bg-background">
+        <DateStrip
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+          diaryData={diaryEntries}
+        />
 
-          {showReturnButton && (
-            <button
-              onClick={() => setSelectedDate(today)}
-              className="fixed bottom-[92px] left-1/2 -translate-x-1/2 z-50
-                         h-[40px] w-[160px] rounded-full
-                         bg-[#F3EADF] text-black text-[15px] shadow-lg"
-              style={{ fontFamily: "var(--font-main)" }}
-            >
-              Вернуться
-            </button>
+        <div className="px-4 pb-24 flex-1 flex">
+          {selectedEntry ? (
+            <FilledState
+              entry={selectedEntry}
+              selectedDate={selectedDate}
+              onEdit={() => setEditingDate(selectedDate)}
+            />
+          ) : selectedDate === today ? (
+            <EmptyState onAddNote={() => setShowAddNote(true)} />
+          ) : (
+            <div className="flex-1 flex items-center justify-center">
+              <NoEntryState selectedDate={selectedDate} />
+            </div>
           )}
-<div className="px-4 pb-24 flex-1 flex">
-  {selectedEntry ? (
-    <FilledState
-      entry={selectedEntry}
-      selectedDate={selectedDate}
-      onEdit={() => setEditingDate(selectedDate)}
-    />
-  ) : selectedDate === today ? (
-    <EmptyState onAddNote={() => setShowAddNote(true)} />
-  ) : (
-    <div className="flex-1 flex items-center justify-center">
-      <NoEntryState selectedDate={selectedDate} />
+        </div>
+      </div>
+
+      {/* Return to today */}
+      {showReturnButton && (
+        <button
+          onClick={handleReturnToToday}
+          className="fixed bottom-[92px] left-1/2 -translate-x-1/2 z-50
+                     h-[40px] w-[160px] rounded-full
+                     bg-[#F3EADF] text-black text-[15px]
+                     shadow-lg"
+          style={{ fontFamily: "var(--font-main)" }}
+        >
+          Вернуться
+        </button>
+      )}
+
+      {/* Bottom navigation */}
+      {!showAboutPage && !showingHistoryDetail && (
+        <BottomNavigation
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+      )}
+
     </div>
-  )}
-</div>
-
-{!showAboutPage && !showingHistoryDetail && (
-  <BottomNavigation
-    activeTab={activeTab}
-    onTabChange={setActiveTab}
-  />
-)}
-
+  </div>
+);
