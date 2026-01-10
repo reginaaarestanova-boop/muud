@@ -231,6 +231,7 @@ export default function App() {
   const selectedEntry = diaryEntries[selectedDate];
 
   /* ---------- UI ---------- */
+  const isFutureDate = selectedDate > today;
   return (
     <div className="h-[100svh] w-full bg-background text-foreground overflow-hidden flex justify-center">
       <div className="w-full max-w-[400px] h-full flex flex-col relative">
@@ -258,21 +259,19 @@ export default function App() {
 
             {/* Контент */}
             <div className="px-4 pb-24 min-h-[calc(100svh-140px)] flex flex-col">
-              {selectedEntry ? (
-                <FilledState
-                  entry={selectedEntry}
-                  selectedDate={selectedDate}
-                  onEdit={() => setEditingDate(selectedDate)}
-                />
-              ) : selectedDate === today ? (
-                <EmptyState onAddNote={() => setShowAddNote(true)} />
-              ) : (
-                // чтобы "нет записи" реально тянулся — оборачиваем в flex-1
-                <div className="flex-1 flex">
-                  <NoEntryState selectedDate={selectedDate} />
-                </div>
-              )}
-            </div>
+  {selectedEntry ? (
+    <FilledState
+      entry={selectedEntry}
+      selectedDate={selectedDate}
+      onEdit={() => setEditingDate(selectedDate)}
+    />
+  ) : isFutureDate ? (
+    <NoEntryState selectedDate={selectedDate} />
+  ) : (
+    <EmptyState onAddNote={() => setShowAddNote(true)} />
+  )}
+</div>
+          </div>
           </div>
         )}
 
