@@ -170,3 +170,23 @@ export function DateStrip({
     {getMonthName(date.getMonth())} {date.getFullYear()}
   </div>
 </button>
+
+              <div className="w-10 h-10 flex items-center justify-center">
+                {entry ? (
+                  <span className="text-[40px]">{getMoodEmoji(entry.mood)}</span>
+                ) : isToday ? (
+                  <div className="w-10 h-10 rounded-full border-2 border-dashed flex items-center justify-center">
+                    <Plus className="w-4 h-4" />
+                  </div>
+                ) : (
+                  <div className="w-10 h-10 rounded-full border-2 border-dashed" />
+                )}
+
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
