@@ -107,17 +107,24 @@ export default function App() {
   }
 
   if (showAddNote) {
-    return (
-      <div className="h-screen bg-background overflow-hidden flex justify-center">
-        <div className="w-full max-w-[400px] h-full">
-          <AddNote
-            onClose={() => setShowAddNote(false)}
-            onSave={() => setShowAddNote(false)}
-          />
-        </div>
+  return (
+    <div className="h-screen bg-background overflow-hidden flex justify-center">
+      <div className="w-full max-w-[400px] h-full">
+        <AddNote
+          onClose={() => setShowAddNote(false)}
+          onSave={(entry) => {
+            setDiaryEntries((prev) => ({
+              ...prev,
+              [selectedDate]: entry,
+            }));
+            setShowAddNote(false);
+          }}
+        />
       </div>
-    );
-  }
+    </div>
+  );
+}
+
 
   if (editingDate && diaryEntries[editingDate]) {
     return (
