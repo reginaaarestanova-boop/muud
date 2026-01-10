@@ -10,6 +10,7 @@ import { AddNote } from "./components/AddNote";
 import { EditNote } from "./components/EditNote";
 import { Onboarding } from "./components/Onboarding";
 
+
 type Theme = "dark" | "light" | "auto";
 
 const STORAGE_KEY = "diary_entries";
@@ -26,10 +27,14 @@ export default function App() {
   }, []);
 
   /* ---------- Utils ---------- */
-  const getTodayDate = () => {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-  };
+ const today = getTodayDate();
+const showReturnButton =
+  activeTab === "today" && selectedDate !== today;
+
+const handleReturnToToday = () => {
+  setSelectedDate(today);
+};
+
 
   /* ---------- Onboarding ---------- */
   const [showOnboarding, setShowOnboarding] = useState(() => {
@@ -117,32 +122,46 @@ export default function App() {
   const selectedEntry = diaryEntries[selectedDate];
 
   /* ---------- UI ---------- */
-  return (
-    <div className="h-screen bg-background text-foreground overflow-hidden">
-      <div className="max-w-[430px] min-w-[320px] mx-auto h-full flex flex-col">
-        {activeTab === "today" && (
-          <div className="flex-1 overflow-y-auto bg-background">
-            <DateStrip
-              selectedDate={selectedDate}
-              onSelectDate={setSelectedDate}
-              diaryData={diaryEntries}
-            />
+ return (
+  <div className="h-screen w-full bg-background overflow-hidden flex justify-center">
+    <div className="w-full max-w-[400px] h-full flex flex-col">
 
-            <div className="px-4 pb-24 flex flex-col">
-              {selectedEntry ? (
-                <FilledState
-                  entry={selectedEntry}
-                  selectedDate={selectedDate}
-                  onEdit={() => setEditingDate(selectedDate)}
-                />
-              ) : selectedDate === today ? (
-                <EmptyState onAddNote={() => setShowAddNote(true)} />
-              ) : (
-                <NoEntryState selectedDate={selectedDate} />
-              )}
-            </div>
-          </div>
-        )}
+      {/* scroll container */}
+      <div className="flex-1 overflow-y-auto bg-background">
+        <DateStrip
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
+          diaryData={diaryEntries}
+        />
+
+{showReturnButton && (
+  <button
+    onClick={handleReturnToToday}
+    className="fixed bottom-[92px] left-1/2 -translate-x-1/2 z-50
+               h-[40px] w-[160px] rounded-full
+               bg-[#F3EADF] text-black text-[15px]
+               shadow-lg"
+    style={{ fontFamily: "var(--font-main)" }}
+  >
+    Вернуться
+  </button>
+)}
+
+
+        <div className="px-4 pb-24">
+          {selectedEntry ? (
+            <FilledState
+              entry={selectedEntry}
+              selectedDate={selectedDate}
+              onEdit={() => setEditingDate(selectedDate)}
+            />
+          ) : selectedDate === today ? (
+            <EmptyState onAddNote={() => setShowAddNote(true)} />
+          ) : (
+            <NoEntryState selectedDate={selectedDate} />
+          )}
+        </div>
+      </div>
 
         {activeTab === "history" && (
           <History
