@@ -78,8 +78,35 @@ export default function App() {
   }
 
   if (showAddNote) {
-    return <AddNote onClose={() => setShowAddNote(false)} onSave={() => setShowAddNote(false)} />;
-  }
+  return (
+    <div className="h-screen bg-background overflow-hidden">
+      <AddNote
+        onClose={() => setShowAddNote(false)}
+        onSave={handleAddNote}
+      />
+    </div>
+  );
+}
+
+if (editingDate && diaryEntries[editingDate]) {
+  return (
+    <div className="h-screen bg-background overflow-hidden">
+      <EditNote
+        entry={diaryEntries[editingDate]}
+        date={editingDate}
+        onClose={() => setEditingDate(null)}
+        onSave={handleEditNote}
+        onDelete={() => {
+          const copy = { ...diaryEntries };
+          delete copy[editingDate];
+          setDiaryEntries(copy);
+          setEditingDate(null);
+        }}
+      />
+    </div>
+  );
+}
+
 
   if (editingDate && diaryEntries[editingDate]) {
     return (
