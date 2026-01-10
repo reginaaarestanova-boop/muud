@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { DateStrip } from "./components/DateStrip";
+import { FixedDateStrip as DateStrip } from "./components/FixedDateStrip";
 import { EmptyState } from "./components/EmptyState";
 import { NoEntryState } from "./components/NoEntryState";
 import { FilledState } from "./components/FilledState";
@@ -75,7 +75,11 @@ export default function App() {
 
     // ВСЕГДА стартуем на сегодня
     setSelectedDate(today);
-
+    // Debug: log initial dates to help diagnose start-date issues
+    try {
+      // eslint-disable-next-line no-console
+      console.log(`[muud] App init: today=${today}, lastStored=${localStorage.getItem(LAST_DATE_KEY)}`);
+    } catch {}
     // можно всё равно обновлять last_date чтобы календарь “знал” сегодняшнюю
     try {
       localStorage.setItem(LAST_DATE_KEY, today);
@@ -92,6 +96,11 @@ export default function App() {
   useEffect(() => {
     try {
       localStorage.setItem(LAST_DATE_KEY, selectedDate);
+      // Debug: log when selectedDate changes
+      try {
+        // eslint-disable-next-line no-console
+        console.log(`[muud] selectedDate changed -> ${selectedDate}`);
+      } catch {}
     } catch {}
   }, [selectedDate]);
 

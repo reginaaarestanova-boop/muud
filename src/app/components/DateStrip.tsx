@@ -68,10 +68,10 @@ export function DateStrip({
   const [showLeftFade, setShowLeftFade] = useState(false);
   const [showRightFade, setShowRightFade] = useState(true);
   const isUserScrollingRef = useRef(false);
-  
+
   // State to hold dynamic date range
   const [dateRange, setDateRange] = useState({ start: -30, end: 30 });
-  
+
   // Generate dates based on current range
   const generateDates = () => {
     const dates = [];
@@ -85,7 +85,7 @@ export function DateStrip({
 
     return dates;
   };
-  
+
   const dates = generateDates();
 
   // Update fade indicators based on scroll position
@@ -95,7 +95,7 @@ export function DateStrip({
       const scrollLeft = container.scrollLeft;
       const scrollWidth = container.scrollWidth;
       const clientWidth = container.clientWidth;
-      
+
       setShowLeftFade(scrollLeft > 50);
       setShowRightFade(scrollLeft + clientWidth < scrollWidth - 50);
     }
@@ -105,6 +105,11 @@ export function DateStrip({
   useEffect(() => {
     if (scrollRef.current) {
       const selectedItem = itemRefs.current.get(selectedDate);
+      try {
+        // eslint-disable-next-line no-console
+        if (selectedItem) console.log(`[muud] DateStrip initial scroll to ${selectedDate}`);
+        else console.log(`[muud] DateStrip initial scroll: selected item not found: ${selectedDate}`);
+      } catch {}
       if (selectedItem) {
         const container = scrollRef.current;
         const itemLeft = selectedItem.offsetLeft;
@@ -118,16 +123,57 @@ export function DateStrip({
     }
   }, [selectedDate]); // Added selectedDate dependency to ensure initial scroll happens
 
+  // Debug: log date range, first computed date, and which date is visually centered shortly after mount
+  useEffect(() => {
+    try {
+      // eslint-disable-next-line no-console
+      console.log(
+        `[muud] DateStrip: today=${formatDate(new Date())}, dateRange=${JSON.stringify(
+          dateRange
+        )}, firstDate=${dates.length ? formatDate(dates[0]) : 'N/A'}, selectedDate=${selectedDate}`
+      );
+    } catch {}
+
+    const t = setTimeout(() => {
+      if (!scrollRef.current) return;
+      const container = scrollRef.current;
+      const containerCenter = container.scrollLeft + container.clientWidth / 2;
+
+      let centeredDate: string | null = null;
+      let closestDistance = Infinity;
+
+      itemRefs.current.forEach((item, dateStr) => {
+        const itemCenter = item.offsetLeft + item.offsetWidth / 2;
+        const distance = Math.abs(containerCenter - itemCenter);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          centeredDate = dateStr;
+        }
+      });
+
+      try {
+        // eslint-disable-next-line no-console
+        console.log(
+          `[muud] DateStrip centeredOn=${centeredDate}, selectedDateExists=${itemRefs.current.has(
+            selectedDate
+          )}`
+        );
+      } catch {}
+    }, 60);
+
+    return () => clearTimeout(t);
+  }, [dateRange, selectedDate, dates.length]);
+
   // Scroll to selected date when it changes from external source (like "Return" button)
   const isFirstRenderRef = useRef(true);
-  
+
   useEffect(() => {
     // Skip on first render (already handled above)
     if (isFirstRenderRef.current) {
       isFirstRenderRef.current = false;
       return;
     }
-    
+
     if (scrollRef.current && !isUserScrollingRef.current) {
       const selectedItem = itemRefs.current.get(selectedDate);
       if (selectedItem) {
@@ -152,23 +198,23 @@ export function DateStrip({
         const scrollLeft = container.scrollLeft;
         const scrollWidth = container.scrollWidth;
         const clientWidth = container.clientWidth;
-        
+
         // Mark that user is scrolling
         isUserScrollingRef.current = true;
-        
+
         // Load more dates at the beginning
         if (scrollLeft < 500) {
           isLoadingRef.current = true;
           setIsLoading(true);
-          
+
           // Save the first visible date to maintain position
           const containerLeft = container.scrollLeft;
           const firstVisibleDate = Array.from(itemRefs.current.entries()).find(([_, el]) => {
             return el.offsetLeft >= containerLeft;
           })?.[0];
-          
+
           setDateRange(prev => ({ ...prev, start: prev.start - 20 }));
-          
+
           // Adjust scroll position to maintain visual position
           setTimeout(() => {
             if (scrollRef.current && firstVisibleDate) {
@@ -182,19 +228,19 @@ export function DateStrip({
             isLoadingRef.current = false;
           }, 0);
         }
-        
+
         // Load more dates at the end
         if (scrollLeft + clientWidth > scrollWidth - 500) {
           isLoadingRef.current = true;
           setDateRange(prev => ({ ...prev, end: prev.end + 20 }));
-          
+
           requestAnimationFrame(() => {
             isLoadingRef.current = false;
           });
         }
-        
+
         setIsScrolling(true);
-        
+
         // Clear previous timeout
         if (scrollTimeout.current) {
           clearTimeout(scrollTimeout.current);
@@ -204,19 +250,19 @@ export function DateStrip({
         scrollTimeout.current = setTimeout(() => {
           setIsScrolling(false);
           isUserScrollingRef.current = false;
-          
+
           // Find the centered item only if user was manually scrolling
           if (scrollRef.current && !isLoading) {
             const container = scrollRef.current;
             const containerCenter = container.scrollLeft + container.clientWidth / 2;
-            
+
             let closestDate = selectedDate;
             let closestDistance = Infinity;
 
             itemRefs.current.forEach((item, dateStr) => {
               const itemCenter = item.offsetLeft + item.offsetWidth / 2;
               const distance = Math.abs(containerCenter - itemCenter);
-              
+
               if (distance < closestDistance) {
                 closestDistance = distance;
                 closestDate = dateStr;
@@ -225,7 +271,7 @@ export function DateStrip({
 
             if (closestDate !== selectedDate) {
               onSelectDate(closestDate);
-              
+
               // Snap to center
               const item = itemRefs.current.get(closestDate);
               if (item) {
@@ -285,7 +331,7 @@ export function DateStrip({
             opacity: showRightFade ? 1 : 0,
           }}
         />
-        
+
         {dates.map((date) => {
           const dateStr = formatDate(date);
           const isSelected = dateStr === selectedDate;
