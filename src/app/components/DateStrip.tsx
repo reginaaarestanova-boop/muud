@@ -147,41 +147,26 @@ export function DateStrip({
               className="flex-shrink-0 flex flex-col items-center gap-2"
             >
               <button
-                onClick={() => onSelectDate(dateStr)}
-                className={`px-4 py-2 rounded-2xl ${
-                  isSelected ? "bg-secondary" : "hover:bg-muted/10"
-                }`}
-              >
+  onClick={() => onSelectDate(dateStr)}
+  className={`px-4 py-2 rounded-2xl ${
+    isSelected ? "bg-secondary" : "hover:bg-muted/10"
+  }`}
+>
+  {/* День */}
+  <div
+    className={`text-[48px] font-bold transition-colors ${
+      isSelected ? "text-black" : "text-muted-foreground"
+    }`}
+  >
+    {String(date.getDate()).padStart(2, "0")}
+  </div>
 
-                <div className="text-[48px] font-bold"> ${
-                  isSelected ? "text-black" : "text-muted-foreground"
-  }`
-                  {String(date.getDate()).padStart(2, "0")}
-                </div>
-                <div className="text-[13px]">
-                  ${
-    isSelected ? "text-black" : "text-muted-foreground"
-  }
-                  {getMonthName(date.getMonth())} {date.getFullYear()}
-                </div>
-              </button>
-
-              <div className="w-10 h-10 flex items-center justify-center">
-                {entry ? (
-                  <span className="text-[40px]">{getMoodEmoji(entry.mood)}</span>
-                ) : isToday ? (
-                  <div className="w-10 h-10 rounded-full border-2 border-dashed flex items-center justify-center">
-                    <Plus className="w-4 h-4" />
-                  </div>
-                ) : (
-                  <div className="w-10 h-10 rounded-full border-2 border-dashed" />
-                )}
-
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+  {/* Месяц + год */}
+  <div
+    className={`text-[13px] transition-colors ${
+      isSelected ? "text-black" : "text-muted-foreground"
+    }`}
+  >
+    {getMonthName(date.getMonth())} {date.getFullYear()}
+  </div>
+</button>
