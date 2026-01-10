@@ -162,7 +162,7 @@ export default function App() {
             </button>
           )}
 
-         < className="px-4 pb-24 flex-1 flex">
+         className="px-4 pb-24 flex-1 flex"
   {selectedEntry ? (
     <FilledState
       entry={selectedEntry}
@@ -172,10 +172,9 @@ export default function App() {
   ) : selectedDate === today ? (
     <EmptyState onAddNote={() => setShowAddNote(true)} />
   ) : (
-    <div className="flex-1 flex items-center justify-center">
+    className="flex-1 flex items-center justify-center"
       <NoEntryState selectedDate={selectedDate} />
-    </div>
-
+    </className=>
         <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
     </div>
