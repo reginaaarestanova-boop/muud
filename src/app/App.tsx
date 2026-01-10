@@ -268,7 +268,19 @@ export default function App() {
   ) : isFutureDate ? (
     <NoEntryState selectedDate={selectedDate} />
   ) : (
-    <EmptyState onAddNote={() => setShowAddNote(true)} />
+    <>
+      {/* 🟡 Заголовок для прошлых дней */}
+      {selectedDate < today && (
+        <h2
+          className="text-[18px] mb-4 text-foreground"
+          style={{ fontFamily: "var(--font-main)", fontWeight: 500 }}
+        >
+          Как прошёл этот день?
+        </h2>
+      )}
+
+      <EmptyState onAddNote={() => setShowAddNote(true)} />
+    </>
   )}
 </div>
           </div>
