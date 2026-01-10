@@ -10,12 +10,20 @@ import { AddNote } from "./components/AddNote";
 import { EditNote } from "./components/EditNote";
 import { Onboarding } from "./components/Onboarding";
 
-
 type Theme = "dark" | "light" | "auto";
 
 const STORAGE_KEY = "diary_entries";
 const ONBOARDING_KEY = "onboarding_completed";
 const LAST_DATE_KEY = "muud_last_date";
+
+/* ---------- Utils ---------- */
+const getTodayDate = () => {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
 
 export default function App() {
   /* ---------- Telegram ---------- */
@@ -26,29 +34,9 @@ export default function App() {
     tg.expand();
   }, []);
 
-  /* ---------- Utils ---------- */
- const today = getTodayDate();
-const showReturnButton =
-  activeTab === "today" && selectedDate !== today;
-
-const handleReturnToToday = () => {
-  setSelectedDate(today);
-};
-
-
-  /* ---------- Onboarding ---------- */
-  const [showOnboarding, setShowOnboarding] = useState(() => {
-    return localStorage.getItem(ONBOARDING_KEY) !== "true";
-  });
-
-  const handleOnboardingComplete = () => {
-    localStorage.setItem(ONBOARDING_KEY, "true");
-    setShowOnboarding(false);
-  };
-
   /* ---------- State ---------- */
   const [activeTab, setActiveTab] = useState<"today" | "history" | "settings">("today");
-  const [selectedDate, setSelectedDate] = useState(getTodayDate);
+  const [selectedDate, setSelectedDate] = useState<string>(getTodayDate);
   const [diaryEntries, setDiaryEntries] = useState<Record<string, any>>({});
   const [showAddNote, setShowAddNote] = useState(false);
   const [editingDate, setEditingDate] = useState<string | null>(null);
@@ -56,11 +44,20 @@ const handleReturnToToday = () => {
   const [showingHistoryDetail, setShowingHistoryDetail] = useState(false);
   const [theme, setTheme] = useState<Theme>("dark");
 
-  /* ---------- Init data ---------- */
+  /* ---------- Onboarding ---------- */
+  const [showOnboarding, setShowOnboarding] = useState(
+    () => localStorage.getItem(ONBOARDING_KEY) !== "true"
+  );
+
+  /* ---------- Init ---------- */
   useEffect(() => {
     const storedEntries = localStorage.getItem(STORAGE_KEY);
     const lastDate = localStorage.getItem(LAST_DATE_KEY);
-    setDiaryEntries(storedEntries ? JSON.parse(storedEntries) : {});
+
+    if (storedEntries) {
+      setDiaryEntries(JSON.parse(storedEntries));
+    }
+
     setSelectedDate(lastDate ?? getTodayDate());
   }, []);
 
@@ -86,107 +83,137 @@ const handleReturnToToday = () => {
     }
   }, [theme]);
 
+  /* ---------- Helpers ---------- */
+  const today = getTodayDate();
+  const selectedEntry = diaryEntries[selectedDate];
+
+  const showReturnButton =
+    activeTab === "today" && selectedDate !== today;
+
+  const handleReturnToToday = () => {
+    setSelectedDate(today);
+  };
+
   /* ---------- Guards ---------- */
   if (showOnboarding) {
-    return <Onboarding onComplete={handleOnboardingComplete} />;
+    return (
+      <Onboarding
+        onComplete={() => {
+          localStorage.setItem(ONBOARDING_KEY, "true");
+          setShowOnboarding(false);
+        }}
+      />
+    );
   }
 
   if (showAddNote) {
     return (
-      <div className="h-screen bg-background overflow-hidden">
-        <AddNote onClose={() => setShowAddNote(false)} onSave={() => setShowAddNote(false)} />
+      <div className="h-screen bg-background overflow-hidden flex justify-center">
+        <div className="w-full max-w-[400px] h-full">
+          <AddNote
+            onClose={() => setShowAddNote(false)}
+            onSave={() => setShowAddNote(false)}
+          />
+        </div>
       </div>
     );
   }
 
   if (editingDate && diaryEntries[editingDate]) {
     return (
-      <div className="h-screen bg-background overflow-hidden">
-        <EditNote
-          entry={diaryEntries[editingDate]}
-          date={editingDate}
-          onClose={() => setEditingDate(null)}
-          onSave={() => setEditingDate(null)}
-          onDelete={() => {
-            const copy = { ...diaryEntries };
-            delete copy[editingDate];
-            setDiaryEntries(copy);
-            setEditingDate(null);
-          }}
-        />
+      <div className="h-screen bg-background overflow-hidden flex justify-center">
+        <div className="w-full max-w-[400px] h-full">
+          <EditNote
+            entry={diaryEntries[editingDate]}
+            date={editingDate}
+            onClose={() => setEditingDate(null)}
+            onSave={() => setEditingDate(null)}
+            onDelete={() => {
+              const copy = { ...diaryEntries };
+              delete copy[editingDate];
+              setDiaryEntries(copy);
+              setEditingDate(null);
+            }}
+          />
+        </div>
       </div>
     );
   }
 
-  const selectedEntry = diaryEntries[selectedDate];
-
   /* ---------- UI ---------- */
- return (
-  <div className="h-screen w-full bg-background overflow-hidden flex justify-center">
-    <div className="w-full max-w-[400px] h-full flex flex-col">
+  return (
+    <div className="h-screen w-full bg-background overflow-hidden flex justify-center">
+      <div className="w-full max-w-[400px] h-full flex flex-col">
 
-      {/* scroll container */}
-      <div className="flex-1 overflow-y-auto bg-background">
-        <DateStrip
-          selectedDate={selectedDate}
-          onSelectDate={setSelectedDate}
-          diaryData={diaryEntries}
-        />
+        {/* Scroll area */}
+        <div className="flex-1 overflow-y-auto bg-background">
+          {activeTab === "today" && (
+            <>
+              <DateStrip
+                selectedDate={selectedDate}
+                onSelectDate={setSelectedDate}
+                diaryData={diaryEntries}
+              />
 
-{showReturnButton && (
-  <button
-    onClick={handleReturnToToday}
-    className="fixed bottom-[92px] left-1/2 -translate-x-1/2 z-50
-               h-[40px] w-[160px] rounded-full
-               bg-[#F3EADF] text-black text-[15px]
-               shadow-lg"
-    style={{ fontFamily: "var(--font-main)" }}
-  >
-    Вернуться
-  </button>
-)}
+              {showReturnButton && (
+                <button
+                  onClick={handleReturnToToday}
+                  className="fixed bottom-[92px] left-1/2 -translate-x-1/2 z-50
+                             h-[40px] w-[160px] rounded-full
+                             bg-[#F3EADF] text-black text-[15px]
+                             shadow-lg"
+                  style={{ fontFamily: "var(--font-main)" }}
+                >
+                  Вернуться
+                </button>
+              )}
 
+              <div className="px-4 pb-24">
+                {selectedEntry ? (
+                  <FilledState
+                    entry={selectedEntry}
+                    selectedDate={selectedDate}
+                    onEdit={() => setEditingDate(selectedDate)}
+                  />
+                ) : selectedDate === today ? (
+                  <EmptyState onAddNote={() => setShowAddNote(true)} />
+                ) : (
+                  <NoEntryState selectedDate={selectedDate} />
+                )}
+              </div>
+            </>
+          )}
 
-        <div className="px-4 pb-24">
-          {selectedEntry ? (
-            <FilledState
-              entry={selectedEntry}
-              selectedDate={selectedDate}
-              onEdit={() => setEditingDate(selectedDate)}
+          {activeTab === "history" && (
+            <History
+              diaryData={diaryEntries}
+              onEdit={setEditingDate}
+              onDelete={(date) => {
+                const copy = { ...diaryEntries };
+                delete copy[date];
+                setDiaryEntries(copy);
+              }}
+              onShowingDetail={setShowingHistoryDetail}
             />
-          ) : selectedDate === today ? (
-            <EmptyState onAddNote={() => setShowAddNote(true)} />
-          ) : (
-            <NoEntryState selectedDate={selectedDate} />
+          )}
+
+          {activeTab === "settings" && (
+            <Settings
+              onShowAbout={setShowAboutPage}
+              onThemeChange={setTheme}
+              currentTheme={theme}
+            />
           )}
         </div>
-      </div>
-
-        {activeTab === "history" && (
-          <History
-            diaryData={diaryEntries}
-            onEdit={setEditingDate}
-            onDelete={(date) => {
-              const copy = { ...diaryEntries };
-              delete copy[date];
-              setDiaryEntries(copy);
-            }}
-            onShowingDetail={setShowingHistoryDetail}
-          />
-        )}
-
-        {activeTab === "settings" && (
-          <Settings
-            onShowAbout={setShowAboutPage}
-            onThemeChange={setTheme}
-            currentTheme={theme}
-          />
-        )}
 
         {!showAboutPage && !showingHistoryDetail && (
-          <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+          <BottomNavigation
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
         )}
       </div>
     </div>
   );
 }
+
