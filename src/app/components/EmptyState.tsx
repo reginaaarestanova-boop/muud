@@ -4,18 +4,18 @@ interface EmptyStateProps {
   onAddNote: () => void;
 }
 
-export function EmptyState({ onAddNote }: EmptyStateProps) {
+export function EmptyState({ onAddNote, title }: EmptyStateProps) {
   return (
-    <div className="flex flex-col h-full w-full">
-      {/* Title */}
-      <h1 className="text-2xl text-center pt-8 mb-8" style={{ fontFamily: 'var(--font-main)' }}>
-        Как ты себя
-        <br />
-        чувствуешь сегодня?
+    <div>
+      <h1
+        className="text-[18px] mb-4"
+        style={{ fontFamily: "var(--font-main)", fontWeight: 700 }}
+      >
+        {title ?? "Как прошёл твой день?"}
       </h1>
 
       {/* Main Card - stretches to fill remaining space */}
-      <button 
+      <button
         onClick={onAddNote}
         className="w-full bg-card rounded-3xl p-12 flex flex-col items-center justify-center gap-4 hover:bg-muted/10 transition-colors flex-1 mb-5"
       >
