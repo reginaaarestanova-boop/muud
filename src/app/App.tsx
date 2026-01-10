@@ -118,7 +118,6 @@ const handleReturnToToday = () => {
     );
   }
 
-  const today = getTodayDate();
   const selectedEntry = diaryEntries[selectedDate];
 
   /* ---------- UI ---------- */
