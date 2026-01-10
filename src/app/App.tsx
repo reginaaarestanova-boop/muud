@@ -161,8 +161,7 @@ export default function App() {
               Вернуться
             </button>
           )}
-
-         className="px-4 pb-24 flex-1 flex"
+<div className="px-4 pb-24 flex-1 flex">
   {selectedEntry ? (
     <FilledState
       entry={selectedEntry}
@@ -172,11 +171,16 @@ export default function App() {
   ) : selectedDate === today ? (
     <EmptyState onAddNote={() => setShowAddNote(true)} />
   ) : (
-    className="flex-1 flex items-center justify-center"
+    <div className="flex-1 flex items-center justify-center">
       <NoEntryState selectedDate={selectedDate} />
-    </className=>
-        <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
-      </div>
     </div>
-  );
-}
+  )}
+</div>
+
+{!showAboutPage && !showingHistoryDetail && (
+  <BottomNavigation
+    activeTab={activeTab}
+    onTabChange={setActiveTab}
+  />
+)}
+
