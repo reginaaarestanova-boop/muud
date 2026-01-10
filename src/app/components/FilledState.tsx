@@ -226,13 +226,6 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
               {entry.text}
             </p>
           </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-{/* Diary Text Section */}
           <div className="px-5 pt-[16px] pb-[20px] pr-[20px] pl-[20px]">
             {entry.text ? (
               <button
@@ -252,4 +245,9 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
               </button>
             )}
           </div>
+        </div>
+      </div>
+    </div>
+  );
 
+}
