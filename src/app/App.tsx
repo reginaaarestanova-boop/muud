@@ -272,8 +272,7 @@ export default function App() {
   )}
 </div>
           </div>
-          </div>
-);
+)}
 
         {activeTab === "history" && (
           <div className="flex-1 overflow-hidden bg-background">
