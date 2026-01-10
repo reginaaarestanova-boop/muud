@@ -10,6 +10,7 @@ import { AddNote } from "./components/AddNote";
 import { EditNote } from "./components/EditNote";
 import { Onboarding } from "./components/Onboarding";
 
+
 type Theme = "dark" | "light" | "auto";
 
 // Mock data for diary entries (used only for initial load if no data in localStorage)
@@ -132,6 +133,13 @@ const saveDiaryData = (data: Record<string, any>) => {
 };
 
 export default function App() {
+    useEffect(() => {
+    const tg = (window as any).Telegram?.WebApp;
+    if (!tg) return;
+
+    tg.ready();
+    tg.expand();
+  }, []);
   // Get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
     const today = new Date();
