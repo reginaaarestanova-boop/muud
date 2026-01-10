@@ -152,10 +152,10 @@ export function DateStrip({
                   isSelected ? "bg-secondary" : "hover:bg-muted/10"
                 }`}
               >
-                <div className="text-[48px] font-bold">
+                <div className="text-[48px] #000 font-bold">
                   {String(date.getDate()).padStart(2, "0")}
                 </div>
-                <div className="text-[13px]">
+                <div className="text-[13px] #000">
                   {getMonthName(date.getMonth())} {date.getFullYear()}
                 </div>
               </button>
