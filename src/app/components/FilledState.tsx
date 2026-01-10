@@ -231,3 +231,25 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
     </div>
   );
 }
+
+{/* Diary Text Section */}
+          <div className="px-5 pt-[16px] pb-[20px] pr-[20px] pl-[20px]">
+            {entry.text ? (
+              <button
+                onClick={onEdit}
+                className="text-[15px] leading-[20px] tracking-[0.4px] text-card-foreground font-normal text-center w-full"
+                style={{ fontFamily: 'var(--font-main)' }}
+              >
+                {entry.text}
+              </button>
+            ) : (
+              <button
+                onClick={onEdit}
+                className="text-[15px] leading-[20px] tracking-[0.4px] text-card-foreground font-bold text-center w-full"
+                style={{ fontFamily: 'var(--font-main)' }}
+              >
+                Написать заметку
+              </button>
+            )}
+          </div>
+
