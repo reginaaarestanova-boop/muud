@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { FixedDateStrip as DateStrip } from "./components/FixedDateStrip";
+import { DateStrip } from "./components/DateStrip";
 import { EmptyState } from "./components/EmptyState";
 import { NoEntryState } from "./components/NoEntryState";
 import { FilledState } from "./components/FilledState";

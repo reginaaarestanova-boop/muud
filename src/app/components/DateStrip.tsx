@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 
 interface DateStripProps {
@@ -8,51 +8,21 @@ interface DateStripProps {
 }
 
 const formatDate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 };
 
-const getMonthName = (month: number) => {
-  const months = [
-    "Янв",
-    "Фев",
-    "Мар",
-    "Апр",
-    "Май",
-    "Июн",
-    "Июл",
-    "Авг",
-    "Сен",
-    "Окт",
-    "Ноя",
-    "Дек",
-  ];
-  return months[month];
-};
+const getMonthName = (month: number) =>
+  ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"][month];
 
-const getMoodEmoji = (mood: string) => {
-  const emojiMap: Record<string, string> = {
-    happy: "😀",
-    excited: "😍",
-    neutral: "😐",
-    calm: "🙂",
-    tired: "😒",
-    anxious: "😖",
-  };
-  return emojiMap[mood] || "😐";
-};
+const getMoodEmoji = (mood: string) =>
+  ({ happy:"😀", excited:"😍", neutral:"😐", calm:"🙂", tired:"😒", anxious:"😖" } as Record<string,string>)[mood] || "😐";
 
-const getMoodColor = (mood: string) => {
-  const colorMap: Record<string, string> = {
-    sad: "#E5C1E5",
-    neutral: "#C1D9E5",
-    happy: "#C1D9F0",
-    calm: "#A8D5C3",
-  };
-  return colorMap[mood] || "#C1D9E5";
-};
+const INITIAL_RANGE = 30;
+const LOAD_STEP = 20;
+const EDGE_OFFSET = 400;
 
 export function DateStrip({
   selectedDate,
@@ -61,358 +31,150 @@ export function DateStrip({
 }: DateStripProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
-  const [isScrolling, setIsScrolling] = useState(false);
-  const scrollTimeout = useRef<NodeJS.Timeout>();
+
   const isLoadingRef = useRef(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const didInitScrollRef = useRef(false);
+
+  const [range, setRange] = useState({ start: -INITIAL_RANGE, end: INITIAL_RANGE });
   const [showLeftFade, setShowLeftFade] = useState(false);
   const [showRightFade, setShowRightFade] = useState(true);
-  const isUserScrollingRef = useRef(false);
 
-  // State to hold dynamic date range
-  const [dateRange, setDateRange] = useState({ start: -30, end: 30 });
-
-  // Generate dates based on current range
-  const generateDates = () => {
-    const dates = [];
-    const today = new Date(); // Use actual current date
-
-    for (let i = dateRange.start; i <= dateRange.end; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      dates.push(date);
+  // ✅ даты строятся от selectedDate
+  const dates = useMemo(() => {
+    const base = new Date(`${selectedDate}T00:00:00`);
+    const arr: Date[] = [];
+    for (let i = range.start; i <= range.end; i++) {
+      const d = new Date(base);
+      d.setDate(base.getDate() + i);
+      arr.push(d);
     }
+    return arr;
+  }, [selectedDate, range]);
 
-    return dates;
-  };
+  // ✅ одноразовое центрирование при первом рендере
+  useLayoutEffect(() => {
+    if (didInitScrollRef.current) return;
 
-  const dates = generateDates();
-
-  // Update fade indicators based on scroll position
-  const updateFadeIndicators = () => {
-    if (scrollRef.current) {
+    requestAnimationFrame(() => {
       const container = scrollRef.current;
-      const scrollLeft = container.scrollLeft;
-      const scrollWidth = container.scrollWidth;
-      const clientWidth = container.clientWidth;
+      const item = itemRefs.current.get(selectedDate);
+      if (!container || !item) return;
+
+      container.scrollLeft =
+        item.offsetLeft -
+        container.clientWidth / 2 +
+        item.offsetWidth / 2;
+
+      didInitScrollRef.current = true;
+    });
+  }, [dates.length, selectedDate]);
+
+  // ✅ infinite scroll
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = el;
 
       setShowLeftFade(scrollLeft > 50);
       setShowRightFade(scrollLeft + clientWidth < scrollWidth - 50);
-    }
-  };
 
-  // Initial scroll to selected date
-  useEffect(() => {
-    if (scrollRef.current) {
-      const selectedItem = itemRefs.current.get(selectedDate);
-      try {
-        // eslint-disable-next-line no-console
-        if (selectedItem) console.log(`[muud] DateStrip initial scroll to ${selectedDate}`);
-        else console.log(`[muud] DateStrip initial scroll: selected item not found: ${selectedDate}`);
-      } catch {}
-      if (selectedItem) {
-        const container = scrollRef.current;
-        const itemLeft = selectedItem.offsetLeft;
-        const itemWidth = selectedItem.offsetWidth;
-        const containerWidth = container.clientWidth;
-        const scrollPosition = itemLeft - containerWidth / 2 + itemWidth / 2;
-        // Use instant scroll on initial mount
-        container.scrollLeft = scrollPosition;
-      }
-      updateFadeIndicators();
-    }
-  }, [selectedDate]); // Added selectedDate dependency to ensure initial scroll happens
+      if (isLoadingRef.current) return;
 
-  // Debug: log date range, first computed date, and which date is visually centered shortly after mount
-  useEffect(() => {
-    try {
-      // eslint-disable-next-line no-console
-      console.log(
-        `[muud] DateStrip: today=${formatDate(new Date())}, dateRange=${JSON.stringify(
-          dateRange
-        )}, firstDate=${dates.length ? formatDate(dates[0]) : 'N/A'}, selectedDate=${selectedDate}`
-      );
-    } catch {}
+      // ⬅️ влево
+      if (scrollLeft < EDGE_OFFSET) {
+        isLoadingRef.current = true;
+        const prevWidth = scrollWidth;
 
-    const t = setTimeout(() => {
-      if (!scrollRef.current) return;
-      const container = scrollRef.current;
-      const containerCenter = container.scrollLeft + container.clientWidth / 2;
+        setRange(r => ({ ...r, start: r.start - LOAD_STEP }));
 
-      let centeredDate: string | null = null;
-      let closestDistance = Infinity;
-
-      itemRefs.current.forEach((item, dateStr) => {
-        const itemCenter = item.offsetLeft + item.offsetWidth / 2;
-        const distance = Math.abs(containerCenter - itemCenter);
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          centeredDate = dateStr;
-        }
-      });
-
-      try {
-        // eslint-disable-next-line no-console
-        console.log(
-          `[muud] DateStrip centeredOn=${centeredDate}, selectedDateExists=${itemRefs.current.has(
-            selectedDate
-          )}`
-        );
-      } catch {}
-    }, 60);
-
-    return () => clearTimeout(t);
-  }, [dateRange, selectedDate, dates.length]);
-
-  // Scroll to selected date when it changes from external source (like "Return" button)
-  const isFirstRenderRef = useRef(true);
-
-  useEffect(() => {
-    // Skip on first render (already handled above)
-    if (isFirstRenderRef.current) {
-      isFirstRenderRef.current = false;
-      return;
-    }
-
-    if (scrollRef.current && !isUserScrollingRef.current) {
-      const selectedItem = itemRefs.current.get(selectedDate);
-      if (selectedItem) {
-        const container = scrollRef.current;
-        const itemLeft = selectedItem.offsetLeft;
-        const itemWidth = selectedItem.offsetWidth;
-        const containerWidth = container.clientWidth;
-        const scrollPosition = itemLeft - containerWidth / 2 + itemWidth / 2;
-        container.scrollTo({
-          left: scrollPosition,
-          behavior: 'smooth'
+        requestAnimationFrame(() => {
+          if (!scrollRef.current) return;
+          const diff = scrollRef.current.scrollWidth - prevWidth;
+          scrollRef.current.scrollLeft += diff;
+          isLoadingRef.current = false;
         });
       }
-    }
-  }, [selectedDate]);
 
-  // Handle infinite scroll - load more dates when reaching edges
-  useEffect(() => {
-    const handleScroll = () => {
-      if (scrollRef.current && !isLoadingRef.current) {
-        const container = scrollRef.current;
-        const scrollLeft = container.scrollLeft;
-        const scrollWidth = container.scrollWidth;
-        const clientWidth = container.clientWidth;
-
-        // Mark that user is scrolling
-        isUserScrollingRef.current = true;
-
-        // Load more dates at the beginning
-        if (scrollLeft < 500) {
-          isLoadingRef.current = true;
-          setIsLoading(true);
-
-          // Save the first visible date to maintain position
-          const containerLeft = container.scrollLeft;
-          const firstVisibleDate = Array.from(itemRefs.current.entries()).find(([_, el]) => {
-            return el.offsetLeft >= containerLeft;
-          })?.[0];
-
-          setDateRange(prev => ({ ...prev, start: prev.start - 20 }));
-
-          // Adjust scroll position to maintain visual position
-          setTimeout(() => {
-            if (scrollRef.current && firstVisibleDate) {
-              const targetElement = itemRefs.current.get(firstVisibleDate);
-              if (targetElement) {
-                const targetLeft = targetElement.offsetLeft;
-                scrollRef.current.scrollLeft = targetLeft;
-              }
-            }
-            setIsLoading(false);
-            isLoadingRef.current = false;
-          }, 0);
-        }
-
-        // Load more dates at the end
-        if (scrollLeft + clientWidth > scrollWidth - 500) {
-          isLoadingRef.current = true;
-          setDateRange(prev => ({ ...prev, end: prev.end + 20 }));
-
-          requestAnimationFrame(() => {
-            isLoadingRef.current = false;
-          });
-        }
-
-        setIsScrolling(true);
-
-        // Clear previous timeout
-        if (scrollTimeout.current) {
-          clearTimeout(scrollTimeout.current);
-        }
-
-        // Set new timeout to detect scroll end
-        scrollTimeout.current = setTimeout(() => {
-          setIsScrolling(false);
-          isUserScrollingRef.current = false;
-
-          // Find the centered item only if user was manually scrolling
-          if (scrollRef.current && !isLoading) {
-            const container = scrollRef.current;
-            const containerCenter = container.scrollLeft + container.clientWidth / 2;
-
-            let closestDate = selectedDate;
-            let closestDistance = Infinity;
-
-            itemRefs.current.forEach((item, dateStr) => {
-              const itemCenter = item.offsetLeft + item.offsetWidth / 2;
-              const distance = Math.abs(containerCenter - itemCenter);
-
-              if (distance < closestDistance) {
-                closestDistance = distance;
-                closestDate = dateStr;
-              }
-            });
-
-            if (closestDate !== selectedDate) {
-              onSelectDate(closestDate);
-
-              // Snap to center
-              const item = itemRefs.current.get(closestDate);
-              if (item) {
-                const itemLeft = item.offsetLeft;
-                const itemWidth = item.offsetWidth;
-                const containerWidth = container.clientWidth;
-                const scrollPosition = itemLeft - containerWidth / 2 + itemWidth / 2;
-                container.scrollTo({
-                  left: scrollPosition,
-                  behavior: 'smooth'
-                });
-              }
-            }
-          }
-        }, 150);
+      // ➡️ вправо
+      if (scrollLeft + clientWidth > scrollWidth - EDGE_OFFSET) {
+        isLoadingRef.current = true;
+        setRange(r => ({ ...r, end: r.end + LOAD_STEP }));
+        requestAnimationFrame(() => {
+          isLoadingRef.current = false;
+        });
       }
     };
 
-    const scrollElement = scrollRef.current;
-    if (scrollElement) {
-      scrollElement.addEventListener("scroll", handleScroll);
-      return () => {
-        scrollElement.removeEventListener("scroll", handleScroll);
-        if (scrollTimeout.current) {
-          clearTimeout(scrollTimeout.current);
-        }
-      };
-    }
-  }, [selectedDate, onSelectDate, dates.length, isLoading]);
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <div className="sticky top-0 z-10 bg-background pt-6 pb-4">
       <div
         ref={scrollRef}
-        className="flex items-center gap-4 overflow-x-auto scrollbar-hide px-4 relative"
-        style={{
-          scrollBehavior: "smooth",
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
-        onScroll={updateFadeIndicators}
+        className="relative flex gap-4 overflow-x-auto px-4 scrollbar-hide"
+        style={{ scrollbarWidth: "none" }}
       >
-        {/* Left Fade */}
+        {/* fades */}
         <div
-          className="absolute left-0 top-0 bottom-0 w-16 pointer-events-none z-10 transition-opacity duration-300"
+          className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 z-10 transition-opacity"
           style={{
-            background: "linear-gradient(to right, var(--background) 0%, transparent 100%)",
             opacity: showLeftFade ? 1 : 0,
+            background: "linear-gradient(to right, var(--background), transparent)",
           }}
         />
-
-        {/* Right Fade */}
         <div
-          className="absolute right-0 top-0 bottom-0 w-16 pointer-events-none z-10 transition-opacity duration-300"
+          className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 z-10 transition-opacity"
           style={{
-            background: "linear-gradient(to left, var(--background) 0%, transparent 100%)",
             opacity: showRightFade ? 1 : 0,
+            background: "linear-gradient(to left, var(--background), transparent)",
           }}
         />
 
-        {dates.map((date) => {
+        {dates.map(date => {
           const dateStr = formatDate(date);
           const isSelected = dateStr === selectedDate;
-          const todayStr = formatDate(new Date()); // Get actual today's date
-          const isToday = dateStr === todayStr;
+          const isToday = dateStr === formatDate(new Date());
           const entry = diaryData[dateStr];
-          const day = date.getDate();
-          const month = getMonthName(date.getMonth());
-          const year = date.getFullYear();
 
           return (
             <div
               key={dateStr}
-              ref={(el) => el && itemRefs.current.set(dateStr, el)}
-              className="flex flex-col items-center gap-2 flex-shrink-0"
-              style={{
-                scrollSnapAlign: "center",
-              }}
+              ref={el => el && itemRefs.current.set(dateStr, el)}
+              className="flex-shrink-0 flex flex-col items-center gap-2"
             >
-              {/* Date */}
               <button
-                onClick={() => {
-                  onSelectDate(dateStr);
-                  // Scroll to center when clicked
-                  if (scrollRef.current && itemRefs.current.get(dateStr)) {
-                    const item = itemRefs.current.get(dateStr);
-                    const container = scrollRef.current;
-                    const itemLeft = item.offsetLeft;
-                    const itemWidth = item.offsetWidth;
-                    const containerWidth = container.clientWidth;
-                    const scrollPosition = itemLeft - containerWidth / 2 + itemWidth / 2;
-                    container.scrollTo({
-                      left: scrollPosition,
-                      behavior: 'smooth'
-                    });
-                  }
-                }}
-                className={`flex flex-col items-center px-4 py-2 rounded-2xl transition-all ${
-                  isSelected
-                    ? "bg-secondary"
-                    : "hover:bg-muted/10"
+                onClick={() => onSelectDate(dateStr)}
+                className={`px-4 py-2 rounded-2xl ${
+                  isSelected ? "bg-secondary" : "hover:bg-muted/10"
                 }`}
               >
-                <div
-                  className={`text-[48px] leading-none ${
-                    isSelected ? "text-secondary-foreground" : "text-muted-foreground"
-                  }`}
-                  style={{ fontFamily: 'var(--font-main)', fontWeight: 700 }}
-                >
-                  {String(day).padStart(2, "0")}
+                <div className="text-[48px] font-bold">
+                  {String(date.getDate()).padStart(2, "0")}
                 </div>
-                <div className={`text-[13px] ${
-                  isSelected ? "text-secondary-foreground" : "text-muted-foreground"
-                }`} style={{ fontFamily: 'var(--font-main)', fontWeight: 400 }}>
-                  {month} {year}
+                <div className="text-[13px]">
+                  {getMonthName(date.getMonth())} {date.getFullYear()}
                 </div>
               </button>
 
-              {/* Mood Indicator */}
               <div className="w-10 h-10 flex items-center justify-center">
                 {entry ? (
-                  <span className="text-[40px] leading-none">
-                    {getMoodEmoji(entry.mood)}
-                  </span>
+                  <span className="text-[40px]">{getMoodEmoji(entry.mood)}</span>
                 ) : isToday ? (
-                  <div className="w-10 h-10 rounded-full border-2 border-dashed border-muted-foreground flex items-center justify-center">
-                    <Plus className="w-4 h-4 text-muted-foreground" />
+                  <div className="w-10 h-10 rounded-full border-2 border-dashed flex items-center justify-center">
+                    <Plus className="w-4 h-4" />
                   </div>
                 ) : (
-                  <div className="w-10 h-10 rounded-full border-2 border-dashed border-muted-foreground" />
+                  <div className="w-10 h-10 rounded-full border-2 border-dashed" />
                 )}
               </div>
             </div>
           );
         })}
       </div>
-      <style>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </div>
   );
 }
