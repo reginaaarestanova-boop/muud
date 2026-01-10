@@ -247,3 +247,9 @@
 html {
   font-size: var(--font-size);
 }
+
+  html, body {
+  height: 100%;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}

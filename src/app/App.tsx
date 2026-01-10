@@ -180,6 +180,20 @@ export default function App() {
   const selectedEntry =
     diaryEntries[selectedDate as keyof typeof diaryEntries];
 
+    useEffect(() => {
+  const lastDate = localStorage.getItem("muud_last_date");
+  const today = getTodayDate();
+
+  setSelectedDate(lastDate || today);
+  window.scrollTo({ top: 0, behavior: "auto" });
+}, []);
+
+useEffect(() => {
+  localStorage.setItem("muud_last_date", selectedDate);
+}, [selectedDate]);
+
+
+
   // Save diary entries to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem(
@@ -238,10 +252,7 @@ export default function App() {
   const showReturnButton =
     activeTab === "today" && daysDiff >= 2;
 
-  const handleReturnToToday = () => {
-    setSelectedDate(todayDate);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+ window.scrollTo({ top: 0, behavior: "auto" });
 
   const handleAddNote = (entry: {
     mood: string;
@@ -428,7 +439,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
       <div className="w-full max-w-[430px] min-w-[320px] mx-auto flex-1 flex flex-col">
         {/* Conditional Rendering Based on Active Tab */}
         {activeTab === "today" && (
@@ -441,7 +452,7 @@ export default function App() {
             />
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col px-4 pb-20">
+            <div className="flex-1 overflow-y-auto">
               <div className="flex-1 flex flex-col">
                 {selectedEntry ? (
                   <FilledState
