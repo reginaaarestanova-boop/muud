@@ -110,18 +110,55 @@ export default function App() {
 
   /* ---------- CRUD ---------- */
   const handleAddNote = (entry: any) => {
-    const updated = {
-      ...diaryEntries,
-      [selectedDate]: {
-        ...entry,
-        sleepLabel:
-          entry.sleep >= 7 ? "Отдохнувший" : entry.sleep > 4 ? "Нормально" : "Невыспавшийся",
-      },
-    };
-
-    setDiaryEntries(updated);
-    setShowAddNote(false);
+  const summaries: Record<string, string[]> = {
+    happy: [
+      "День был наполнен радостью и приятными моментами.",
+      "Удалось сохранить хорошее настроение на протяжении дня.",
+    ],
+    calm: [
+      "Спокойный и уравновешенный день.",
+      "День прошёл размеренно и без спешки.",
+    ],
+    neutral: [
+      "Обычный день без ярких событий.",
+      "Спокойный день в привычном ритме.",
+    ],
+    tired: [
+      "День был утомительным, стоит больше отдохнуть.",
+      "Чувствуется усталость, но это временно.",
+    ],
+    excited: [
+      "День был полон вдохновения и энергии.",
+      "Появилось много идей и мотивации.",
+    ],
+    anxious: [
+      "День был непростым, но ты справился.",
+      "Тревожный день, но это уже позади.",
+    ],
   };
+
+  const moodSummaries = summaries[entry.mood] || summaries.neutral;
+  const summary =
+    moodSummaries[Math.floor(Math.random() * moodSummaries.length)];
+
+  const updated = {
+    ...diaryEntries,
+    [selectedDate]: {
+      ...entry,
+      summary,
+      sleepLabel:
+        entry.sleep >= 7
+          ? "Отдохнувший"
+          : entry.sleep > 4
+          ? "Нормально"
+          : "Невыспавшийся",
+    },
+  };
+
+  setDiaryEntries(updated);
+  setShowAddNote(false);
+};
+
 
   const handleEditNote = (entry: any) => {
     if (!editingDate) return;
