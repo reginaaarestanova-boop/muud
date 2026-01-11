@@ -184,7 +184,6 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
   </div>
 )}
 
-    /* Action Button */
     <div className="px-5 pt-[2px] pb-4">
       <button
         onClick={onEdit}
