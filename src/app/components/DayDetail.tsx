@@ -196,11 +196,11 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
   <div className="relative px-4 pb-2">
     <div className="flex gap-2 items-center">
       <button
-        onClick={handleDeleteClick}
-        className="bg-destructive w-[62px] h-[62px] rounded-full flex items-center justify-center shrink-0"
-      >
-        <Trash2 className="w-7 h-7 text-destructive-foreground" />
-      </button>
+  onClick={handleDeleteClick}
+  className="bg-destructive w-[62px] h-[62px] rounded-full flex items-center justify-center shrink-0"
+>
+  <Trash2 className="w-7 h-7 text-destructive-foreground" />
+</button>
 
       <button
         onClick={onEdit}
@@ -217,4 +217,9 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
       <div className="w-[134px] h-[5px] bg-foreground/20 rounded-full" />
     </div>
   </div>
-</div>
+  </div>
+  </div>
+  </div>
+  </div>
+);
+}
