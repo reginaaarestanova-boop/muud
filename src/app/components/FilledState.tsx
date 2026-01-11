@@ -210,7 +210,7 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
         {/* Mood and Diary Card Combined */}
         <div className="bg-card rounded-3xl overflow-hidden flex flex-col gap-2 relative">
           {/* Mood Section */}
-          <div className="rounded-3xl p-5 flex flex-col items-center gap-2 bg-muted/20 light:bg-[#F3EADF]">
+          <div className="rounded-3xl p-5 mb-[2px] flex flex-col items-center gap-2 bg-muted/20 light:bg-[#F3EADF]">
             {/* Mood Emoji */}
             <span className="text-[96px] leading-none">{face}</span>
 
@@ -232,12 +232,23 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
   )}
 </div>
 
-{/* Action Button */}
+{/* Action Button — только если нет текстовой заметки */}
 {!entry.text && (
-  <div className="px-5 pt-[16px] pb-[20px]">
+  <div className="px-5 pt-[2px] pb-[20px]">
     <button
       onClick={onEdit}
-      className="text-[15px] leading-[20px] tracking-[0.4px] text-card-foreground font-bold text-center w-full"
+      className="
+        w-full
+        h-[48px]
+        rounded-full
+        bg-[#F3EADF]
+        text-black
+        text-[15px]
+        font-medium
+        flex items-center justify-center
+        active:scale-[0.98]
+        transition-transform
+      "
       style={{ fontFamily: "var(--font-main)" }}
     >
       Дополнить день
