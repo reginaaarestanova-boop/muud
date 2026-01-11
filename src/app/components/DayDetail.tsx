@@ -155,7 +155,7 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
   </div>
 
   {/* ↓ либо текст, либо кнопка */}
-  {entry.text?.trim() ? (
+ {entry.text?.trim() ? (
   <div className="px-5 py-4">
     <p
       className="text-[15px] leading-[20px] text-card-foreground text-center"
@@ -207,7 +207,7 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
         Дополнить день
       </button>
     </div>
-  )}
+  </div>
 </div>
         </div>
       </div>
