@@ -220,17 +220,25 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
             </div>
           </div>
 
-         {/* Diary Text Section */}
+{/* Diary Text Section */}
 <div className="px-5 pt-4 pb-3">
   {entry.text && (
     <p
-      className="text-[15px] leading-[20px] tracking-[0.4px] text-card-foreground font-normal"
+      className="
+        text-[15px]
+        leading-[20px]
+        tracking-[0.4px]
+        text-card-foreground
+        font-normal
+        text-center
+      "
       style={{ fontFamily: "var(--font-main)" }}
     >
       {entry.text}
     </p>
   )}
 </div>
+
 
 {/* Action Button — только если нет текстовой заметки */}
 {!entry.text && (
