@@ -232,33 +232,39 @@ export default function App() {
 
 /* ---------- UI ---------- */
 const isFutureDate = selectedDate > today;
-
 return (
-  <div className="h-[100svh] w-full bg-background text-foreground overflow-hidden flex justify-center">
-    <div className="w-full max-w-[400px] h-full flex flex-col relative">
+{activeTab === "today" && (
+  <div className="flex-1 overflow-y-auto bg-background">
 
-      {/* TODAY */}
-      {activeTab === "today" && (
-        <div className="flex-1 overflow-y-auto bg-background">
-          <div className="px-4 pb-24 min-h-[calc(100svh-140px)] flex flex-col">
-            {selectedEntry ? (
-              <FilledState
-                entry={selectedEntry}
-                selectedDate={selectedDate}
-                onEdit={() => setEditingDate(selectedDate)}
-              />
-            ) : isFutureDate ? (
-              <NoEntryState selectedDate={selectedDate} />
-            ) : (
-              <EmptyState
-                onAddNote={() => setShowAddNote(true)}
-                title={
-                  selectedDate < today
-                    ? "Как прошёл этот день?"
-                    : "Как прошёл твой день?"
-                }
-              />
-            )}
+    {/* ✅ ВОТ ОН */}
+    <DateStrip
+      selectedDate={selectedDate}
+      onSelectDate={setSelectedDate}
+      diaryData={diaryEntries}
+    />
+
+    <div className="px-4 pb-24 min-h-[calc(100svh-140px)] flex flex-col">
+      {selectedEntry ? (
+        <FilledState
+          entry={selectedEntry}
+          selectedDate={selectedDate}
+          onEdit={() => setEditingDate(selectedDate)}
+        />
+      ) : isFutureDate ? (
+        <NoEntryState selectedDate={selectedDate} />
+      ) : (
+        <EmptyState
+          onAddNote={() => setShowAddNote(true)}
+          title={
+            selectedDate < today
+              ? "Как прошёл этот день?"
+              : "Как прошёл твой день?"
+          }
+        />
+      )}
+    </div>
+  </div>
+)}
           </div>
         </div>
       )}
