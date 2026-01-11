@@ -212,6 +212,7 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
         </div>
       </div>
   );
+}
 
       {/* Footer - Action Buttons */}
       <div className="absolute bottom-0 left-0 right-0 w-full max-w-[430px] mx-auto">
