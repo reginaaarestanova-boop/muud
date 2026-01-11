@@ -21,3 +21,6 @@
   font-weight: 700;
 }
 
+body {
+  font-family: var(--font-main);
+}
