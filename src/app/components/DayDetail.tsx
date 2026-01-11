@@ -155,17 +155,17 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
   </div>
 
   {/* ↓ либо текст, либо кнопка */}
- {entry.text?.trim() ? (
-  <div className="px-5 py-4">
-    <p
-      className="text-[15px] leading-[20px] text-card-foreground text-center"
-      style={{ fontFamily: "var(--font-main)" }}
-    >
-      {entry.text}
-    </p>
-  </div>
-) : (
-<div className="px-5 pt-[2px] pb-4">
+  {entry.text?.trim() ? (
+    <div className="px-5 py-4">
+      <p
+        className="text-[15px] leading-[20px] text-card-foreground text-center"
+        style={{ fontFamily: "var(--font-main)" }}
+      >
+        {entry.text}
+      </p>
+    </div>
+  ) : (
+    <div className="px-5 pt-[2px] pb-4">
       <button
         onClick={onEdit}
         className="
@@ -187,36 +187,34 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
         Дополнить день
       </button>
     </div>
+  )}
+</div>
+
+{/* Footer - Action Buttons */}
+<div className="absolute bottom-0 left-0 right-0 w-full max-w-[430px] mx-auto">
+  <div className="absolute bottom-0 left-0 right-0 h-[140px] bg-gradient-to-b from-transparent to-background pointer-events-none" />
+  <div className="relative px-4 pb-2">
+    <div className="flex gap-2 items-center">
+      <button
+        onClick={handleDeleteClick}
+        className="bg-destructive w-[62px] h-[62px] rounded-full flex items-center justify-center shrink-0"
+      >
+        <Trash2 className="w-7 h-7 text-destructive-foreground" />
+      </button>
+
+      <button
+        onClick={onEdit}
+        className="flex-1 h-[62px] bg-primary rounded-full flex items-center justify-center"
+        style={{ fontFamily: "var(--font-main)" }}
+      >
+        <span className="text-[#fff] text-[17px] leading-[22px] font-bold">
+          Редактировать
+        </span>
+      </button>
+    </div>
+
+    <div className="h-[34px] flex items-end justify-center pb-2">
+      <div className="w-[134px] h-[5px] bg-foreground/20 rounded-full" />
+    </div>
   </div>
 </div>
-        </div>
-
-      {/* Footer - Action Buttons */}
-      <div className="absolute bottom-0 left-0 right-0 w-full max-w-[430px] mx-auto">
-        <div className="absolute bottom-0 left-0 right-0 h-[140px] bg-gradient-to-b from-transparent to-background pointer-events-none" />
-        <div className="relative px-4 pb-2">
-          <div className="flex gap-2 items-center">
-            <button
-              onClick={handleDeleteClick}
-              className="bg-destructive w-[62px] h-[62px] rounded-full flex items-center justify-center shrink-0"
-            >
-              <Trash2 className="w-7 h-7 text-destructive-foreground" />
-            </button>
-            <button
-              onClick={onEdit}
-              className="flex-1 h-[62px] bg-primary rounded-full flex items-center justify-center"
-              style={{ fontFamily: 'var(--font-main)' }}
-            >
-              <span className="text-[#fff] text-[17px] leading-[22px] font-bold">
-                Редактировать
-              </span>
-            </button>
-          </div>
-          <div className="h-[34px] flex items-end justify-center pb-2">
-            <div className="w-[134px] h-[5px] bg-foreground/20 rounded-full" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
