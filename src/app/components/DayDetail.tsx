@@ -131,34 +131,71 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
             </div>
           </div>
 
-          {/* Mood and Diary Card Combined */}
-          <div className="bg-card rounded-3xl overflow-hidden flex flex-col gap-4">
-            {/* Mood Section */}
-          <div className="rounded-3xl p-5 flex flex-col items-center gap-2
-             bg-[#F3EADF] dark:bg-[#333333]" >
+{/* Mood and Diary Card Combined */}
+<div className="bg-card rounded-3xl overflow-hidden flex flex-col gap-[2px]">
 
-              {/* Mood Emoji */}
-              <span className="text-[120px] leading-none">{face}</span>
+  {/* Mood Section */}
+  <div
+    className="
+      rounded-3xl
+      p-5
+      flex flex-col items-center gap-2
+      bg-[#F3EADF]
+      dark:bg-[#333333]
+    "
+  >
+    <span className="text-[120px] leading-none">{face}</span>
 
-              {/* Mood Label */}
-              <div
-                className="text-[15px] text-center leading-[20px]"
-                style={{ fontFamily: 'var(--font-main)' }}
-              >
-                {entry.moodLabel}
-              </div>
-            </div>
+    <div
+      className="text-[15px] text-center leading-[20px]"
+      style={{ fontFamily: "var(--font-main)" }}
+    >
+      {entry.moodLabel}
+    </div>
+  </div>
 
-            {/* Diary Text Section */}
-            <div className="px-5 pb-4">
-              <p
-                className="text-[15px] leading-[20px] text-card-foreground"
-                style={{ fontFamily: 'var(--font-main)' }}
-              >
-                {entry.text}
-              </p>
-            </div>
-          </div>
+  {/* ↓ либо текст, либо кнопка */}
+  {entry.text ? (
+    /* Diary Text */
+    <div className="px-5 py-4">
+      <p
+        className="
+          text-[15px]
+          leading-[20px]
+          text-card-foreground
+          text-center
+        "
+        style={{ fontFamily: "var(--font-main)" }}
+      >
+        {entry.text}
+      </p>
+    </div>
+  ) : (
+    /* Action Button */
+    <div className="px-5 pt-[2px] pb-4">
+      <button
+        onClick={onEdit}
+        className="
+          w-full
+          h-[48px]
+          rounded-full
+          bg-[#F3EADF]
+          dark:bg-[#444]
+          text-black
+          dark:text-white
+          text-[15px]
+          font-medium
+          flex items-center justify-center
+          active:scale-[0.98]
+          transition-transform
+        "
+        style={{ fontFamily: "var(--font-main)" }}
+      >
+        Дополнить день
+      </button>
+    </div>
+  )}
+</div>
         </div>
       </div>
 
