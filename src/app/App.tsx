@@ -230,79 +230,69 @@ export default function App() {
 
   const selectedEntry = diaryEntries[selectedDate];
 
-  /* ---------- UI ---------- */
-  const isFutureDate = selectedDate > today;
-  return (
-<div className="px-4 pb-24 min-h-[calc(100svh-140px)] flex flex-col">
-  {selectedEntry ? (
-    <FilledState
-      entry={selectedEntry}
-      selectedDate={selectedDate}
-      onEdit={() => setEditingDate(selectedDate)}
-    />
-  ) : isFutureDate ? (
-    <NoEntryState selectedDate={selectedDate} />
-  ) : (
-    <EmptyState
-      onAddNote={() => setShowAddNote(true)}
-      title={
-        selectedDate < today
-          ? "Как прошёл этот день?"
-          : "Как прошёл твой день?"
-      }
-    />
-  )}
-</div>
-  );
+/* ---------- UI ---------- */
+const isFutureDate = selectedDate > today;
 
-            {/* Контент */}
-            <div className="px-4 pb-24 min-h-[calc(100svh-140px)] flex flex-col">
-  {selectedEntry ? (
-    <FilledState
-      entry={selectedEntry}
-      selectedDate={selectedDate}
-      onEdit={() => setEditingDate(selectedDate)}
-    />
-  ) : isFutureDate ? (
-    <NoEntryState selectedDate={selectedDate} />
-  ) : (
-   <EmptyState
-  onAddNote={() => setShowAddNote(true)}
-  title={selectedDate < today ? "Как прошёл этот день?" : "Как прошёл твой день?"}
-/>
-</div>
-</div>
-</div>
-</div>
-  );
-}
+return (
+  <div className="h-[100svh] w-full bg-background text-foreground overflow-hidden flex justify-center">
+    <div className="w-full max-w-[400px] h-full flex flex-col relative">
 
-        {activeTab === "history" && (
-          <div className="flex-1 overflow-hidden bg-background">
-            <History
-              diaryData={diaryEntries}
-              onEdit={(date) => setEditingDate(date)}
-              onDelete={(date) => handleDeleteNote(date)}
-              onShowingDetail={setShowingHistoryDetail}
-            />
+      {/* TODAY */}
+      {activeTab === "today" && (
+        <div className="flex-1 overflow-y-auto bg-background">
+          <div className="px-4 pb-24 min-h-[calc(100svh-140px)] flex flex-col">
+            {selectedEntry ? (
+              <FilledState
+                entry={selectedEntry}
+                selectedDate={selectedDate}
+                onEdit={() => setEditingDate(selectedDate)}
+              />
+            ) : isFutureDate ? (
+              <NoEntryState selectedDate={selectedDate} />
+            ) : (
+              <EmptyState
+                onAddNote={() => setShowAddNote(true)}
+                title={
+                  selectedDate < today
+                    ? "Как прошёл этот день?"
+                    : "Как прошёл твой день?"
+                }
+              />
+            )}
           </div>
-        )}
+        </div>
+      )}
 
-        {activeTab === "settings" && (
-          <div className="flex-1 overflow-hidden bg-background">
-            <Settings
-              onShowAbout={setShowAboutPage}
-              onThemeChange={setTheme}
-              currentTheme={theme}
-            />
-          </div>
-        )}
+      {/* HISTORY */}
+      {activeTab === "history" && (
+        <div className="flex-1 overflow-hidden bg-background">
+          <History
+            diaryData={diaryEntries}
+            onEdit={(date) => setEditingDate(date)}
+            onDelete={(date) => handleDeleteNote(date)}
+            onShowingDetail={setShowingHistoryDetail}
+          />
+        </div>
+      )}
 
-        {/* NAV */}
-        {!showAboutPage && !showingHistoryDetail && (
-          <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
-        )}
-      </div>
+      {/* SETTINGS */}
+      {activeTab === "settings" && (
+        <div className="flex-1 overflow-hidden bg-background">
+          <Settings
+            onShowAbout={setShowAboutPage}
+            onThemeChange={setTheme}
+            currentTheme={theme}
+          />
+        </div>
+      )}
+
+      {/* NAV */}
+      {!showAboutPage && !showingHistoryDetail && (
+        <BottomNavigation
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+      )}
     </div>
-  );
-}
+  </div>
+);
