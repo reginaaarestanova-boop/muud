@@ -2,9 +2,10 @@ import { Plus } from "lucide-react";
 
 interface EmptyStateProps {
   onAddNote: () => void;
+  title?: string;
 }
 
-export function EmptyState({ onAddNote, title }: EmptyStateProps) {
+export function EmptyState({ onAddNote, title = "Как прошёл твой день?" }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center text-center">
       <h1

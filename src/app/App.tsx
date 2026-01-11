@@ -272,9 +272,8 @@ export default function App() {
   onAddNote={() => setShowAddNote(true)}
   title={selectedDate < today ? "Как прошёл этот день?" : "Как прошёл твой день?"}
 />
-  )}
 </div>
-          </div>
+</div>
 )}
 
         {activeTab === "history" && (

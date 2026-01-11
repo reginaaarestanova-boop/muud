@@ -220,7 +220,7 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
             </div>
           </div>
 
-          {/* Diary Text Section */}
+         {/* Diary Text Section */}
 <div className="px-5 pt-4 pb-3">
   {entry.text && (
     <p
@@ -244,34 +244,8 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
     </button>
   </div>
 )}
-{/* Diary Text Section */}
-<div className="px-5 pt-4 pb-3">
-  {entry.text && (
-    <p
-      className="text-[15px] leading-[20px] tracking-[0.4px] text-card-foreground font-normal"
-      style={{ fontFamily: "var(--font-main)" }}
-    >
-      {entry.text}
-    </p>
-  )}
 </div>
-
-{/* Action Button */}
-{!entry.text && (
-  <div className="px-5 pt-[16px] pb-[20px]">
-    <button
-      onClick={onEdit}
-      className="text-[15px] leading-[20px] tracking-[0.4px] text-card-foreground font-bold text-center w-full"
-      style={{ fontFamily: "var(--font-main)" }}
-    >
-      Дополнить день
-    </button>
-  </div>
-)}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
+</div>
+</div>
+);
 }
