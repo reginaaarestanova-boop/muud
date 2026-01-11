@@ -267,8 +267,7 @@ return (
             )}
           </div>
         </div>
-      );
-    }
+      )}
 
 
       {/* HISTORY */}
