@@ -79,14 +79,14 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
 
       {/* Header with Back Button and Date */}
       <div className="relative flex items-center mb-6 w-full">
-        <button 
+        <button
           onClick={onBack}
           className="shrink-0 w-7 h-7 flex items-center justify-center z-10"
         >
           <ArrowLeft className="w-7 h-7 text-foreground" />
         </button>
-        <h1 
-          className="absolute left-1/2 -translate-x-1/2 text-[34px] leading-[38px]" 
+        <h1
+          className="absolute left-1/2 -translate-x-1/2 text-[34px] leading-[38px]"
           style={{ fontFamily: 'var(--font-main)' }}
         >
           {formatDate(date)}
@@ -120,9 +120,9 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
                 </span>
                 <span className="text-[28px] leading-none">{sleepInfo.emoji}</span>
               </div>
-              <div 
-                className="text-[13px] leading-[17px] text-muted-foreground" 
-                style={{ 
+              <div
+                className="text-[13px] leading-[17px] text-muted-foreground"
+                style={{
                   fontFamily: 'var(--font-main)',
                 }}
               >
@@ -134,13 +134,15 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
           {/* Mood and Diary Card Combined */}
           <div className="bg-card rounded-3xl overflow-hidden flex flex-col gap-4">
             {/* Mood Section */}
-            <div className="rounded-3xl p-5 flex flex-col items-center gap-2" style={{ backgroundColor: '#F3EADF' }}>
+          <div className="rounded-3xl p-5 flex flex-col items-center gap-2
+             bg-[#F3EADF] dark:bg-[#333333]" >
+
               {/* Mood Emoji */}
               <span className="text-[120px] leading-none">{face}</span>
 
               {/* Mood Label */}
-              <div 
-                className="text-[15px] text-center leading-[20px]" 
+              <div
+                className="text-[15px] text-center leading-[20px]"
                 style={{ fontFamily: 'var(--font-main)' }}
               >
                 {entry.moodLabel}
@@ -149,8 +151,8 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
 
             {/* Diary Text Section */}
             <div className="px-5 pb-4">
-              <p 
-                className="text-[15px] leading-[20px] text-card-foreground" 
+              <p
+                className="text-[15px] leading-[20px] text-card-foreground"
                 style={{ fontFamily: 'var(--font-main)' }}
               >
                 {entry.text}
