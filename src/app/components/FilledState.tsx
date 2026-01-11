@@ -93,7 +93,7 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
     <div className="flex flex-col gap-4 pt-3 pb-5 w-full">
       {/* Title */}
       <h2 className="text-xl mb-2 text-[24px] text-center" style={{ fontFamily: 'var(--font-main)' }}>
-        {selectedDate === "2026-01-09" ? "Твой день сегодня:" : "Твой день:"}
+        {selectedDate === "2026-01-09" ? "Твой день:" : "Твой день:"}
       </h2>
 
       {/* Container for all blocks with padding */}
