@@ -267,11 +267,8 @@ return (
             )}
           </div>
         </div>
-      )}
-
-    </div>
-  </div>
-);
+      );
+    }
 
 
       {/* HISTORY */}
@@ -283,7 +280,7 @@ return (
             onDelete={(date) => handleDeleteNote(date)}
             onShowingDetail={setShowingHistoryDetail}
           />
-        </div>
+           </div>
       )}
 
       {/* SETTINGS */}
@@ -297,7 +294,7 @@ return (
         </div>
       )}
 
-      {/* NAV */}
+       {/* NAV */}
       {!showAboutPage && !showingHistoryDetail && (
         <BottomNavigation
           activeTab={activeTab}
