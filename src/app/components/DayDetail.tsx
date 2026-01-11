@@ -165,26 +165,7 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
     </p>
   </div>
 ) : (
-  <div className="px-5 pt-[2px] pb-4">
-    <button
-      onClick={onEdit}
-      className="
-        w-full h-[48px] rounded-full
-        bg-[#F3EADF] dark:bg-[#444]
-        text-black dark:text-white
-        text-[15px] font-medium
-        flex items-center justify-center
-        active:scale-[0.98]
-        transition-transform
-      "
-      style={{ fontFamily: "var(--font-main)" }}
-    >
-      Дополнить день
-    </button>
-  </div>
-)}
-
-    <div className="px-5 pt-[2px] pb-4">
+<div className="px-5 pt-[2px] pb-4">
       <button
         onClick={onEdit}
         className="
