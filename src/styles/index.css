@@ -1,5 +1,23 @@
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
-@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=PT+Sans:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+:root {
+  --font-main: "Comfortaa", "PT Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.font-main {
+  font-family: var(--font-main);
+}
+
+.pt-sans-regular {
+  font-family: "PT Sans", sans-serif;
+  font-weight: 400;
+}
+
+.pt-sans-bold {
+  font-family: "PT Sans", sans-serif;
+  font-weight: 700;
+}
 
