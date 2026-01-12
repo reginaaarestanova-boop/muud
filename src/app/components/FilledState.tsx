@@ -5,6 +5,8 @@ interface FilledStateProps {
     mood: string;
     moodLabel: string;
     moodColor: string;
+    moods?: string[];
+    moodLabels?: string[];
     sleep: number;
     sleepLabel: string;
     summary: string;
@@ -86,7 +88,8 @@ function AnimatedGradientBg() {
 }
 
 export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
-  const face = getMoodFace(entry.mood);
+  const moodIds = (entry.moods && entry.moods.length > 0) ? entry.moods.slice(0, 3) : (entry.mood ? [entry.mood] : []);
+  const faces = moodIds.map(getMoodFace);
   const sleepInfo = getSleepInfo(entry.sleep);
 
   return (
@@ -211,8 +214,12 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
         <div className="bg-card rounded-3xl overflow-hidden flex flex-col gap-2 relative">
           {/* Mood Section */}
           <div className="rounded-3xl p-5 mb-[2px] flex flex-col items-center gap-2 bg-muted/20 light:bg-[#F3EADF]">
-            {/* Mood Emoji */}
-            <span className="text-[96px] leading-none">{face}</span>
+            {/* Mood Emojis (up to 3) */}
+            <div className="flex items-center justify-center gap-2">
+              {faces.map((f, idx) => (
+                <span key={`${f}-${idx}`} className="text-[64px] leading-none">{f}</span>
+              ))}
+            </div>
 
             {/* Mood Label */}
             <div className="text-[15px] text-center tracking-[0.4px] leading-[24px]" style={{ fontFamily: 'var(--font-main)' }}>

@@ -8,6 +8,8 @@ interface HistoryEntry {
   mood: string;
   moodLabel: string;
   moodColor: string;
+  moods?: string[];
+  moodLabels?: string[];
   sleep: number;
   sleepLabel: string;
   summary: string;
@@ -136,7 +138,7 @@ export function History({ diaryData, onEdit, onDelete, onShowingDetail }: Histor
   };
 
   return (
-    <div 
+    <div
       className="flex flex-col pt-8 pb-24 px-4 w-full"
       onClick={handleBackgroundClick}
     >
@@ -169,7 +171,8 @@ export function History({ diaryData, onEdit, onDelete, onShowingDetail }: Histor
         /* Entries List */
         <div className="flex flex-col gap-6 w-full">
           {entries.map((entry, index) => {
-            const face = getMoodFace(entry.mood);
+            const moodIds = (entry.moods && entry.moods.length > 0) ? entry.moods.slice(0, 3) : (entry.mood ? [entry.mood] : []);
+            const faces = moodIds.map(getMoodFace);
             const sleepInfo = getSleepInfo(entry.sleep);
             const isRevealed = swipedIndex === index;
 
@@ -181,7 +184,7 @@ export function History({ diaryData, onEdit, onDelete, onShowingDetail }: Histor
                 </p>
 
                 {/* Swipeable Container */}
-                <div 
+                <div
                   className="relative overflow-hidden rounded-3xl"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -216,10 +219,13 @@ export function History({ diaryData, onEdit, onDelete, onShowingDetail }: Histor
                     onMouseLeave={handleTouchEnd}
                     onClick={() => handleCardClick(entry.date)}
                   >
-                    {/* Mood Avatar */}
-                    <div className="bg-card rounded-3xl p-5 flex flex-col items-center justify-center flex-shrink-0 gap-2 max-h-[72px]">
-                      {/* Mood Emoji */}
-                      <span className="text-[40px] leading-none">{face}</span>
+                    {/* Mood Avatar (stacked emojis) */}
+                    <div className="bg-card rounded-3xl p-5 flex flex-col items-center justify-center flex-shrink-0 gap-1 max-h-[72px]">
+                      <div className="flex flex-col items-center justify-center leading-none">
+                        {faces.map((f, idx) => (
+                          <span key={`${f}-${idx}`} className="text-[22px] leading-[22px]">{f}</span>
+                        ))}
+                      </div>
                     </div>
 
                     {/* Info Card */}

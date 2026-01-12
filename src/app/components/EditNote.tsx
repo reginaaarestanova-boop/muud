@@ -6,6 +6,8 @@ interface EditNoteProps {
   entry: {
     mood: string;
     moodLabel: string;
+    moods?: string[];
+    moodLabels?: string[];
     sleep: number;
     text: string;
   };
@@ -14,6 +16,8 @@ interface EditNoteProps {
   onSave: (entry: {
     mood: string;
     moodLabel: string;
+    moods: string[];
+    moodLabels: string[];
     sleep: number;
     text: string;
   }) => void;
@@ -30,14 +34,14 @@ const moods = [
 ];
 
 export function EditNote({ entry, onClose, onSave, onDelete }: EditNoteProps) {
-  const [selectedMood, setSelectedMood] = useState<string>(entry.mood);
+  const [selectedMoods, setSelectedMoods] = useState<string[]>(entry.moods ?? (entry.mood ? [entry.mood] : []));
   const [sleepHours, setSleepHours] = useState(entry.sleep);
   const [noteText, setNoteText] = useState(entry.text);
   const [showExitAlert, setShowExitAlert] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
-  const hasChanges = 
-    selectedMood !== entry.mood ||
+  const hasChanges =
+    (selectedMoods.join(",") !== (entry.moods ?? (entry.mood ? [entry.mood] : [])).join(",")) ||
     sleepHours !== entry.sleep ||
     noteText !== entry.text;
 
@@ -51,12 +55,19 @@ export function EditNote({ entry, onClose, onSave, onDelete }: EditNoteProps) {
   };
 
   const handleSave = () => {
-    const mood = moods.find(m => m.id === selectedMood);
-    if (!mood) return;
+    if (selectedMoods.length === 0) return;
+    const primaryMoodId = selectedMoods[0];
+    const primaryMood = moods.find(m => m.id === primaryMoodId);
+    if (!primaryMood) return;
+    const selectedMoodLabels = selectedMoods
+      .map(id => moods.find(m => m.id === id)?.label)
+      .filter(Boolean) as string[];
 
     onSave({
-      mood: selectedMood,
-      moodLabel: mood.label,
+      mood: primaryMoodId,
+      moodLabel: primaryMood.label,
+      moods: selectedMoods,
+      moodLabels: selectedMoodLabels,
       sleep: sleepHours,
       text: noteText,
     });
@@ -70,7 +81,20 @@ export function EditNote({ entry, onClose, onSave, onDelete }: EditNoteProps) {
     onDelete();
   };
 
-  const canSave = selectedMood && sleepHours > 0;
+  const toggleMood = (id: string) => {
+    setSelectedMoods((prev) => {
+      const isSelected = prev.includes(id);
+      if (isSelected) {
+        return prev.filter(m => m !== id);
+      }
+      if (prev.length >= 3) {
+        return prev;
+      }
+      return [...prev, id];
+    });
+  };
+
+  const canSave = selectedMoods.length > 0 && sleepHours > 0;
 
   return (
     <div className="flex flex-col h-full w-full bg-background">
@@ -101,8 +125,8 @@ export function EditNote({ entry, onClose, onSave, onDelete }: EditNoteProps) {
       <div className="flex-1 overflow-y-auto pb-32 pt-8 px-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-6 w-full">
-          <h1 
-            className="text-[34px] leading-[38px]" 
+          <h1
+            className="text-[34px] leading-[38px]"
             style={{ fontFamily: 'var(--font-main)' }}
           >
             Изменить запись
@@ -117,28 +141,39 @@ export function EditNote({ entry, onClose, onSave, onDelete }: EditNoteProps) {
           {moods.map((mood) => (
             <button
               key={mood.id}
-              onClick={() => setSelectedMood(mood.id)}
+              onClick={() => toggleMood(mood.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-full h-12 transition-colors ${
-                selectedMood === mood.id
+                selectedMoods.includes(mood.id)
                   ? "bg-secondary text-secondary-foreground"
                   : "bg-card text-card-foreground"
               }`}
               style={{ fontFamily: 'var(--font-main)' }}
             >
-              <div 
+              <div
                 className="w-7 h-7 rounded-full flex items-center justify-center text-lg shadow-[0px_4px_24px_0px_rgba(0,0,0,0.15)]"
                 style={{ background: mood.gradient }}
               >
                 {mood.emoji}
               </div>
               <span className="text-[15px] leading-[20px] font-bold">{mood.label}</span>
+              {selectedMoods.includes(mood.id) && (
+                <span className="ml-1 text-[12px] opacity-70">✓</span>
+              )}
             </button>
           ))}
+          {selectedMoods.length > 0 && (
+            <div
+              className="ml-auto text-[13px] text-muted-foreground"
+              style={{ fontFamily: 'var(--font-main)' }}
+            >
+              Выбрано: {selectedMoods.length}/3
+            </div>
+          )}
         </div>
 
         {/* Sleep Hours */}
         <div className="flex flex-col gap-2 mb-6">
-          <p 
+          <p
             className="text-[15px] leading-[20px] text-center"
             style={{ fontFamily: 'var(--font-main)' }}
           >
@@ -152,7 +187,7 @@ export function EditNote({ entry, onClose, onSave, onDelete }: EditNoteProps) {
               <Minus className="w-7 h-7 text-foreground" />
             </button>
             <div className="flex-1 bg-card rounded-full h-[62px] flex items-center justify-center">
-              <span 
+              <span
                 className="text-[24px] leading-[26px] font-bold"
                 style={{ fontFamily: 'var(--font-main)' }}
               >
