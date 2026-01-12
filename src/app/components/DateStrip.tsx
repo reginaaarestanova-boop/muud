@@ -188,7 +188,7 @@ export function DateStrip({
                         {faces[0] && (
                           <span
                             className="absolute text-[24px] leading-none"
-                            style={{ left: "50%", top: "-2px", transform: "translateX(-50%)", zIndex: 30 }}
+                            style={{ left: "50%", top: "-4px", transform: "translateX(-50%)", zIndex: 30 }}
                           >
                             {faces[0]}
                           </span>
@@ -197,7 +197,7 @@ export function DateStrip({
                         {faces[1] && (
                           <span
                             className="absolute text-[18px] leading-none"
-                            style={{ left: "0px", bottom: "0px", zIndex: 20 }}
+                            style={{ left: "-3px", bottom: "-3px", zIndex: 20 }}
                           >
                             {faces[1]}
                           </span>
@@ -206,7 +206,7 @@ export function DateStrip({
                         {faces[2] && (
                           <span
                             className="absolute text-[18px] leading-none"
-                            style={{ right: "-2px", bottom: "-2px", zIndex: 10 }}
+                            style={{ right: "-3px", bottom: "-3px", zIndex: 10 }}
                           >
                             {faces[2]}
                           </span>

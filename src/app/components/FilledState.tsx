@@ -223,7 +223,7 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
                 {faces[0] && (
                   <span
                     className="absolute text-[80px] leading-none"
-                    style={{ left: "50%", top: "-6px", transform: "translateX(-50%)", zIndex: 30 }}
+                    style={{ left: "50%", top: "-8px", transform: "translateX(-50%)", zIndex: 30 }}
                   >
                     {faces[0]}
                   </span>
@@ -232,7 +232,7 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
                 {faces[1] && (
                   <span
                     className="absolute text-[56px] leading-none"
-                    style={{ left: "6px", bottom: "2px", zIndex: 20 }}
+                    style={{ left: "-4px", bottom: "-4px", zIndex: 20 }}
                   >
                     {faces[1]}
                   </span>
@@ -241,7 +241,7 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
                 {faces[2] && (
                   <span
                     className="absolute text-[56px] leading-none"
-                    style={{ right: "0px", bottom: "0px", zIndex: 10 }}
+                    style={{ right: "-4px", bottom: "-4px", zIndex: 10 }}
                   >
                     {faces[2]}
                   </span>
