@@ -173,7 +173,47 @@ export function DateStrip({
 
               <div className="w-10 h-10 flex items-center justify-center">
                 {entry ? (
-                  <span className="text-[40px]">{getMoodEmoji(entry.mood)}</span>
+                  (() => {
+                    const moodIds: string[] =
+                      entry.moods && entry.moods.length > 0
+                        ? entry.moods.slice(0, 3)
+                        : (entry.mood ? [entry.mood] : []);
+                    const faces = moodIds.map(getMoodEmoji);
+                    if (faces.length <= 1) {
+                      return <span className="text-[28px] leading-none">{faces[0] ?? getMoodEmoji("neutral")}</span>;
+                    }
+                    return (
+                      <div className="relative w-[40px] h-[36px]">
+                        {/* Top/front */}
+                        {faces[0] && (
+                          <span
+                            className="absolute text-[24px] leading-none"
+                            style={{ left: "50%", top: "-2px", transform: "translateX(-50%)", zIndex: 30 }}
+                          >
+                            {faces[0]}
+                          </span>
+                        )}
+                        {/* Back left */}
+                        {faces[1] && (
+                          <span
+                            className="absolute text-[18px] leading-none"
+                            style={{ left: "0px", bottom: "0px", zIndex: 20 }}
+                          >
+                            {faces[1]}
+                          </span>
+                        )}
+                        {/* Back right */}
+                        {faces[2] && (
+                          <span
+                            className="absolute text-[18px] leading-none"
+                            style={{ right: "-2px", bottom: "-2px", zIndex: 10 }}
+                          >
+                            {faces[2]}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })()
                 ) : isToday ? (
                   <div className="w-10 h-10 rounded-full border-2 border-dashed flex items-center justify-center">
                     <Plus className="w-4 h-4" />

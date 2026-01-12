@@ -8,6 +8,8 @@ interface DayDetailProps {
     mood: string;
     moodLabel: string;
     moodColor: string;
+    moods?: string[];
+    moodLabels?: string[];
     sleep: number;
     sleepLabel: string;
     summary: string;
@@ -49,7 +51,8 @@ const formatDate = (dateStr: string) => {
 };
 
 export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailProps) {
-  const face = getMoodFace(entry.mood);
+  const moodIds = (entry.moods && entry.moods.length > 0) ? entry.moods.slice(0, 3) : (entry.mood ? [entry.mood] : []);
+  const faces = moodIds.map(getMoodFace);
   const sleepInfo = getSleepInfo(entry.sleep);
 
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -144,7 +147,40 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
       dark:bg-[#333333]
     "
   >
-    <span className="text-[120px] leading-none">{face}</span>
+    {/* Mood Emojis (cluster up to 3) */}
+    {faces.length <= 1 ? (
+      <span className="text-[120px] leading-none">{faces[0] ?? getMoodFace('neutral')}</span>
+    ) : (
+      <div className="relative w-[140px] h-[120px]">
+        {/* Top large */}
+        {faces[0] && (
+          <span
+            className="absolute text-[80px] leading-none"
+            style={{ left: "50%", top: "-6px", transform: "translateX(-50%)", zIndex: 30 }}
+          >
+            {faces[0]}
+          </span>
+        )}
+        {/* Bottom left */}
+        {faces[1] && (
+          <span
+            className="absolute text-[56px] leading-none"
+            style={{ left: "6px", bottom: "2px", zIndex: 20 }}
+          >
+            {faces[1]}
+          </span>
+        )}
+        {/* Bottom right */}
+        {faces[2] && (
+          <span
+            className="absolute text-[56px] leading-none"
+            style={{ right: "0px", bottom: "0px", zIndex: 10 }}
+          >
+            {faces[2]}
+          </span>
+        )}
+      </div>
+    )}
 
     <div
       className="text-[15px] text-center leading-[20px]"
@@ -154,8 +190,8 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
     </div>
   </div>
 
-  {/* ↓ либо текст, либо кнопка */}
-  {entry.text?.trim() ? (
+  {/* ↓ только текст; кнопка будет отдельным блоком ниже */}
+  {entry.text?.trim() && (
     <div className="px-5 py-4">
       <p
         className="text-[15px] leading-[20px] text-card-foreground text-center"
@@ -164,31 +200,34 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
         {entry.text}
       </p>
     </div>
-  ) : (
-    <div className="px-5 pt-[2px] pb-4">
-      <button
-        onClick={onEdit}
-        className="
-          w-full
-          h-[48px]
-          rounded-full
-          bg-[#F3EADF]
-          dark:bg-[#444]
-          text-black
-          dark:text-white
-          text-[15px]
-          font-medium
-          flex items-center justify-center
-          active:scale-[0.98]
-          transition-transform
-        "
-        style={{ fontFamily: "var(--font-main)" }}
-      >
-        Дополнить день
-      </button>
-    </div>
   )}
 </div>
+
+{/* Отдельная кнопка (бенто) — если текста нет */}
+{!entry.text?.trim() && (
+  <div className="px-5 pt-2 pb-4">
+    <button
+      onClick={onEdit}
+      className="
+        w-full
+        h-[56px]
+        rounded-full
+        bg-[#F3EADF]
+        dark:bg-[#444]
+        text-black
+        dark:text-white
+        text-[15px]
+        font-medium
+        flex items-center justify-center
+        active:scale-[0.98]
+        transition-transform
+      "
+      style={{ fontFamily: 'var(--font-main)' }}
+    >
+      Дополнить день
+    </button>
+  </div>
+)}
 
 {/* Footer - Action Buttons */}
 <div className="absolute bottom-0 left-0 right-0 w-full max-w-[430px] mx-auto">

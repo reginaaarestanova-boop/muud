@@ -219,13 +219,41 @@ export function History({ diaryData, onEdit, onDelete, onShowingDetail }: Histor
                     onMouseLeave={handleTouchEnd}
                     onClick={() => handleCardClick(entry.date)}
                   >
-                    {/* Mood Avatar (stacked emojis) */}
-                    <div className="bg-card rounded-3xl p-5 flex flex-col items-center justify-center flex-shrink-0 gap-1 max-h-[72px]">
-                      <div className="flex flex-col items-center justify-center leading-none">
-                        {faces.map((f, idx) => (
-                          <span key={`${f}-${idx}`} className="text-[22px] leading-[22px]">{f}</span>
-                        ))}
-                      </div>
+                    {/* Mood Avatar (cluster) */}
+                    <div className="bg-card rounded-3xl p-5 flex items-center justify-center flex-shrink-0 max-h-[72px]">
+                      {faces.length <= 1 ? (
+                        <span className="text-[40px] leading-none">{faces[0] ?? getMoodFace('neutral')}</span>
+                      ) : (
+                        <div className="relative w-[62px] h-[54px]">
+                          {/* Top large */}
+                          {faces[0] && (
+                            <span
+                              className="absolute text-[34px] leading-none"
+                              style={{ left: "50%", top: "-2px", transform: "translateX(-50%)", zIndex: 30 }}
+                            >
+                              {faces[0]}
+                            </span>
+                          )}
+                          {/* Bottom left */}
+                          {faces[1] && (
+                            <span
+                              className="absolute text-[24px] leading-none"
+                              style={{ left: "0px", bottom: "0px", zIndex: 20 }}
+                            >
+                              {faces[1]}
+                            </span>
+                          )}
+                          {/* Bottom right */}
+                          {faces[2] && (
+                            <span
+                              className="absolute text-[24px] leading-none"
+                              style={{ right: "-2px", bottom: "-2px", zIndex: 10 }}
+                            >
+                              {faces[2]}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* Info Card */}

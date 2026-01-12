@@ -214,12 +214,40 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
         <div className="bg-card rounded-3xl overflow-hidden flex flex-col gap-2 relative">
           {/* Mood Section */}
           <div className="rounded-3xl p-5 mb-[2px] flex flex-col items-center gap-2 bg-muted/20 light:bg-[#F3EADF]">
-            {/* Mood Emojis (up to 3) */}
-            <div className="flex items-center justify-center gap-2">
-              {faces.map((f, idx) => (
-                <span key={`${f}-${idx}`} className="text-[64px] leading-none">{f}</span>
-              ))}
-            </div>
+            {/* Mood Emojis (cluster up to 3) */}
+            {faces.length <= 1 ? (
+              <span className="text-[96px] leading-none">{faces[0] ?? getMoodFace('neutral')}</span>
+            ) : (
+              <div className="relative w-[140px] h-[120px]">
+                {/* Top large */}
+                {faces[0] && (
+                  <span
+                    className="absolute text-[80px] leading-none"
+                    style={{ left: "50%", top: "-6px", transform: "translateX(-50%)", zIndex: 30 }}
+                  >
+                    {faces[0]}
+                  </span>
+                )}
+                {/* Bottom left */}
+                {faces[1] && (
+                  <span
+                    className="absolute text-[56px] leading-none"
+                    style={{ left: "6px", bottom: "2px", zIndex: 20 }}
+                  >
+                    {faces[1]}
+                  </span>
+                )}
+                {/* Bottom right */}
+                {faces[2] && (
+                  <span
+                    className="absolute text-[56px] leading-none"
+                    style={{ right: "0px", bottom: "0px", zIndex: 10 }}
+                  >
+                    {faces[2]}
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* Mood Label */}
             <div className="text-[15px] text-center tracking-[0.4px] leading-[24px]" style={{ fontFamily: 'var(--font-main)' }}>
@@ -245,33 +273,32 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
     </p>
   )}
 </div>
+        </div>
 
-
-{/* Action Button — только если нет текстовой заметки */}
-{!entry.text && (
-  <div className="px-5 pt-[2px] pb-[20px]">
-    <button
-      onClick={onEdit}
-      className="
-        w-full
-        h-[48px]
-        rounded-full
-        bg-[#F3EADF]
-        text-black
-        text-[15px]
-        font-medium
-        flex items-center justify-center
-        active:scale-[0.98]
-        transition-transform
-      "
-      style={{ fontFamily: "var(--font-main)" }}
-    >
-      Дополнить день
-    </button>
-  </div>
-)}
-</div>
-</div>
-</div>
-);
+        {/* Separate Action Button — only if there is no text (bento style) */}
+        {!entry.text && (
+          <div className="px-5 pt-2 pb-[2px]">
+            <button
+              onClick={onEdit}
+              className="
+                w-full
+                h-[56px]
+                rounded-full
+                bg-[#F3EADF]
+                text-black
+                text-[15px]
+                font-medium
+                flex items-center justify-center
+                active:scale-[0.98]
+                transition-transform
+              "
+              style={{ fontFamily: 'var(--font-main)' }}
+            >
+              Дополнить день
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }

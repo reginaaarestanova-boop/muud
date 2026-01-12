@@ -123,19 +123,8 @@ export function AddNote({ onClose, onSave }: AddNoteProps) {
                 {mood.emoji}
               </div>
               <span className="text-[15px] leading-[20px] font-bold">{mood.label}</span>
-              {selectedMoods.includes(mood.id) && (
-                <span className="ml-1 text-[12px] opacity-70">✓</span>
-              )}
             </button>
           ))}
-          {selectedMoods.length > 0 && (
-            <div
-              className="ml-auto text-[13px] text-muted-foreground"
-              style={{ fontFamily: 'var(--font-main)' }}
-            >
-              Выбрано: {selectedMoods.length}/3
-            </div>
-          )}
         </div>
 
         {/* Sleep Hours */}
