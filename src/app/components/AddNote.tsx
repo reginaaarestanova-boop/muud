@@ -57,7 +57,7 @@ export function AddNote({ onClose, onSave }: AddNoteProps) {
       moods: selectedMoods,
       moodLabels: selectedMoodLabels,
       sleep: sleepHours,
-      text: noteText || "Запись о дне",
+      text: noteText,
     });
   };
 
