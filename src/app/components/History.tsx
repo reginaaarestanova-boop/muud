@@ -220,11 +220,11 @@ export function History({ diaryData, onEdit, onDelete, onShowingDetail }: Histor
                     onClick={() => handleCardClick(entry.date)}
                   >
                     {/* Mood Avatar (cluster) */}
-                    <div className="bg-card rounded-3xl p-5 flex items-center justify-center flex-shrink-0 max-h-[72px]">
+                    <div className="bg-card rounded-3xl p-5 flex items-center justify-center flex-shrink-0 max-h-[72px] overflow-hidden">
                       {faces.length <= 1 ? (
                         <span className="text-[40px] leading-none">{faces[0] ?? getMoodFace('neutral')}</span>
                       ) : (
-                        <div className="relative w-[62px] h-[54px]">
+                        <div className="relative w-[62px] h-[54px] overflow-hidden">
                           {/* Top large */}
                           {faces[0] && (
                             <span

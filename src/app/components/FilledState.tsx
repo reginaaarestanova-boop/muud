@@ -213,7 +213,7 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
         {/* Mood and Diary Card Combined */}
         <div className="bg-card rounded-3xl overflow-hidden flex flex-col gap-2 relative">
           {/* Mood Section */}
-          <div className="rounded-3xl p-5 mb-[2px] flex flex-col items-center gap-2 bg-muted/20 light:bg-[#F3EADF]">
+          <div className="rounded-3xl p-5 mb-[2px] flex flex-col items-center gap-2 bg-muted/20 light:bg-[#F3EADF] overflow-hidden">
             {/* Mood Emojis (cluster up to 3) */}
             {faces.length <= 1 ? (
               <span className="text-[96px] leading-none">{faces[0] ?? getMoodFace('neutral')}</span>
@@ -255,24 +255,24 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
             </div>
           </div>
 
-{/* Diary Text Section */}
-<div className="px-5 pt-4 pb-3">
-  {entry.text && (
-    <p
-      className="
-        text-[15px]
-        leading-[20px]
-        tracking-[0.4px]
-        text-card-foreground
-        font-normal
-        text-center
-      "
-      style={{ fontFamily: "var(--font-main)" }}
-    >
-      {entry.text}
-    </p>
-  )}
-</div>
+          {/* Diary Text Section */}
+          {entry.text && (
+            <div className="px-5 pt-4 pb-3">
+              <p
+                className="
+                  text-[15px]
+                  leading-[20px]
+                  tracking-[0.4px]
+                  text-card-foreground
+                  font-normal
+                  text-center
+                "
+                style={{ fontFamily: "var(--font-main)" }}
+              >
+                {entry.text}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Separate Action Button — only if there is no text (bento style) */}

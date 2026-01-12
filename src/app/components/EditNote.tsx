@@ -149,12 +149,7 @@ export function EditNote({ entry, onClose, onSave, onDelete }: EditNoteProps) {
               }`}
               style={{ fontFamily: 'var(--font-main)' }}
             >
-              <div
-                className="w-7 h-7 rounded-full flex items-center justify-center text-lg shadow-[0px_4px_24px_0px_rgba(0,0,0,0.15)]"
-                style={{ background: mood.gradient }}
-              >
-                {mood.emoji}
-              </div>
+              <div className="w-7 h-7 flex items-center justify-center text-lg">{mood.emoji}</div>
               <span className="text-[15px] leading-[20px] font-bold">{mood.label}</span>
             </button>
           ))}

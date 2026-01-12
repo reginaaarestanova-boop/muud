@@ -171,7 +171,7 @@ export function DateStrip({
   </div>
 </button>
 
-              <div className="w-10 h-10 flex items-center justify-center">
+              <div className="w-10 h-10 flex items-center justify-center overflow-hidden">
                 {entry ? (
                   (() => {
                     const moodIds: string[] =
@@ -183,12 +183,12 @@ export function DateStrip({
                       return <span className="text-[28px] leading-none">{faces[0] ?? getMoodEmoji("neutral")}</span>;
                     }
                     return (
-                      <div className="relative w-[40px] h-[36px]">
+                      <div className="relative w-[40px] h-[36px] overflow-hidden">
                         {/* Top/front */}
                         {faces[0] && (
                           <span
                             className="absolute text-[24px] leading-none"
-                            style={{ left: "50%", top: "-4px", transform: "translateX(-50%)", zIndex: 30 }}
+                            style={{ left: "50%", top: "3px", transform: "translateX(-50%)", zIndex: 30 }}
                           >
                             {faces[0]}
                           </span>
@@ -197,7 +197,7 @@ export function DateStrip({
                         {faces[1] && (
                           <span
                             className="absolute text-[18px] leading-none"
-                            style={{ left: "-3px", bottom: "-3px", zIndex: 20 }}
+                            style={{ left: "7px", bottom: "10px", zIndex: 20 }}
                           >
                             {faces[1]}
                           </span>
@@ -206,7 +206,7 @@ export function DateStrip({
                         {faces[2] && (
                           <span
                             className="absolute text-[18px] leading-none"
-                            style={{ right: "-3px", bottom: "-3px", zIndex: 10 }}
+                            style={{ right: "12px", bottom: "4px", zIndex: 10 }}
                           >
                             {faces[2]}
                           </span>

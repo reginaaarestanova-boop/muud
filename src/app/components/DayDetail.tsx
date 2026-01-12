@@ -146,12 +146,13 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
       bg-[#F3EADF]
       dark:bg-[#333333]
     "
+  className="overflow-hidden"
   >
     {/* Mood Emojis (cluster up to 3) */}
     {faces.length <= 1 ? (
       <span className="text-[120px] leading-none">{faces[0] ?? getMoodFace('neutral')}</span>
     ) : (
-      <div className="relative w-[140px] h-[120px]">
+      <div className="relative w-[140px] h-[120px] overflow-hidden">
         {/* Top large */}
         {faces[0] && (
           <span
