@@ -20,25 +20,26 @@ interface DayDetailProps {
   onDelete: () => void;
 }
 
-const getMoodFace = (mood: string) => {
-  const emojiMap: Record<string, string> = {
-    happy: "😀",
-    excited: "😍",
-    neutral: "😐",
-    calm: "🙂",
-    tired: "😒",
-    anxious: "😖",
+const getMoodIcon = (mood: string) => {
+  const map: Record<string, string> = {
+    happy: "emodjis/happy.svg",
+    excited: "emodjis/excited.svg",
+    neutral: "emodjis/neutral.svg",
+    calm: "emodjis/calm.svg",
+    tired: "emodjis/tired.svg",
+    anxious: "emodjis/anxious.svg",
   };
-  return emojiMap[mood] || "😐";
+  const rel = map[mood] || "emodjis/neutral.svg";
+  return `${import.meta.env.BASE_URL}${rel}`;
 };
 
 const getSleepInfo = (hours: number) => {
   if (hours >= 1 && hours <= 4) {
-    return { label: "Уставший", emoji: "😒" };
+    return { label: "Уставший", icon: `${import.meta.env.BASE_URL}sleep-emotion/tired.svg` };
   } else if (hours > 4 && hours < 7) {
-    return { label: "Нейтральный", emoji: "😐" };
+    return { label: "Нейтральный", icon: `${import.meta.env.BASE_URL}sleep-emotion/normal.svg` };
   } else {
-    return { label: "Отдохнувший", emoji: "🙂" };
+    return { label: "Отдохнувший", icon: `${import.meta.env.BASE_URL}sleep-emotion/rested.svg` };
   }
 };
 
@@ -51,8 +52,6 @@ const formatDate = (dateStr: string) => {
 };
 
 export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailProps) {
-  const moodIds = (entry.moods && entry.moods.length > 0) ? entry.moods.slice(0, 3) : (entry.mood ? [entry.mood] : []);
-  const faces = moodIds.map(getMoodFace);
   const sleepInfo = getSleepInfo(entry.sleep);
 
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -108,7 +107,7 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
               fontFamily: 'var(--font-main)',
             }}
           >
-            «{entry.summary}»
+            {entry.summary}
           </div>
 
           {/* Sleep Block */}
@@ -121,7 +120,7 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
                 <span className="text-[17px] leading-[24px]" style={{ fontFamily: 'var(--font-main)' }}>
                   {entry.sleep} часов
                 </span>
-                <span className="text-[28px] leading-none">{sleepInfo.emoji}</span>
+                <img src={sleepInfo.icon} alt="" className="w-7 h-7" />
               </div>
               <div
                 className="text-[13px] leading-[17px] text-muted-foreground"
@@ -145,50 +144,31 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
       flex flex-col items-center gap-2
       bg-[#F3EADF]
       dark:bg-[#333333]
+      overflow-hidden
     "
-  className="overflow-hidden"
   >
     {/* Mood Emojis (cluster up to 3) */}
-    {faces.length <= 1 ? (
-      <span className="text-[120px] leading-none">{faces[0] ?? getMoodFace('neutral')}</span>
-    ) : (
-      <div className="relative w-[140px] h-[120px] overflow-hidden">
-        {/* Top large */}
-        {faces[0] && (
-          <span
-            className="absolute text-[80px] leading-none"
-            style={{ left: "50%", top: "0px", transform: "translateX(-50%)", zIndex: 30 }}
-          >
-            {faces[0]}
-          </span>
-        )}
-        {/* Bottom left */}
-        {faces[1] && (
-          <span
-            className="absolute text-[56px] leading-none"
-            style={{ left: "10px", bottom: "4px", zIndex: 20,transform: rotate(-13deg); }}
-          >
-            {faces[1]}
-          </span>
-        )}
-        {/* Bottom right */}
-        {faces[2] && (
-          <span
-            className="absolute text-[56px] leading-none"
-            style={{ right: "10px", bottom: "12px", zIndex: 10,transform: rotate(30deg); }}
-          >
-            {faces[2]}
-          </span>
-        )}
-      </div>
-    )}
+    {(() => {
+      const moodIds = (entry.moods && entry.moods.length > 0) ? entry.moods.slice(0, 3) : (entry.mood ? [entry.mood] : []);
+      const icons = moodIds.map(getMoodIcon);
+      if (icons.length <= 1) {
+        return <img src={icons[0] ?? getMoodIcon('neutral')} alt="" className="w-[120px] h-[120px]" />;
+      }
+      return (
+        <div className="relative w-[140px] h-[120px] overflow-hidden">
+          {icons[0] && (
+            <img src={icons[0]} alt="" className="absolute" style={{ left: "50%", top: "0px", transform: "translateX(-50%)", zIndex: 30 }} width={80} height={80} />
+          )}
+          {icons[1] && (
+            <img src={icons[1]} alt="" className="absolute" style={{ left: "12px", bottom: "4px", zIndex: 20 }} width={56} height={56} />
+          )}
+          {icons[2] && (
+            <img src={icons[2]} alt="" className="absolute" style={{ right: "10px", bottom: "12px", zIndex: 10 }} width={56} height={56} />
+          )}
+        </div>
+      );
+    })()}
 
-    <div
-      className="text-[15px] text-center leading-[20px]"
-      style={{ fontFamily: "var(--font-main)" }}
-    >
-      {entry.moodLabel}
-    </div>
   </div>
 
   {/* ↓ только текст; кнопка будет отдельным блоком ниже */}
@@ -206,7 +186,7 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
 
 {/* Отдельная кнопка (бенто) — если текста нет */}
 {!entry.text?.trim() && (
-  <div className="px-5 pt-2 pb-4">
+  <div className="px-5 pt-2 pb-[2px]">
     <button
       onClick={onEdit}
       className="
@@ -214,9 +194,7 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
         h-[56px]
         rounded-full
         bg-[#F3EADF]
-        dark:bg-[#444]
         text-black
-        dark:text-white
         text-[15px]
         font-medium
         flex items-center justify-center
@@ -237,9 +215,9 @@ export function DayDetail({ date, entry, onBack, onEdit, onDelete }: DayDetailPr
     <div className="flex gap-2 items-center">
       <button
   onClick={handleDeleteClick}
-  className="bg-destructive w-[62px] h-[62px] rounded-full flex items-center justify-center shrink-0"
+  className="w-[62px] h-[62px] rounded-full flex items-center justify-center shrink-0 bg-[#FA7A4D]"
 >
-  <Trash2 className="w-7 h-7 text-destructive-foreground" />
+  <Trash2 className="w-7 h-7 text-[#fff]" />
 </button>
 
       <button

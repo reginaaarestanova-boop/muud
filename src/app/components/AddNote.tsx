@@ -16,13 +16,26 @@ interface AddNoteProps {
 }
 
 const moods = [
-  { id: "excited", label: "Воодушевленный", emoji: "😍", gradient: "linear-gradient(180deg, #FFC90C 0%, #FFECAA 100%)" },
-  { id: "happy", label: "Радостный", emoji: "😀", gradient: "linear-gradient(180deg, #A9C3E6 0%, #DAE6F7 100%)" },
-  { id: "calm", label: "Спокойный", emoji: "🙂", gradient: "linear-gradient(180deg, #6DAD93 0%, #B2E5D0 100%)" },
-  { id: "neutral", label: "Нейтральный", emoji: "😐", gradient: "linear-gradient(180deg, #E8EEF5 0%, #C2C8D0 100%)" },
-  { id: "tired", label: "Уставший", emoji: "😒", gradient: "linear-gradient(180deg, #F0C4DD 0%, #FFDBF0 100%)" },
-  { id: "anxious", label: "Тревожный", emoji: "😖", gradient: "linear-gradient(180deg, #FA7A4D 0%, #FFC9B7 100%)" },
+  { id: "excited", label: "Воодушевленный" },
+  { id: "happy", label: "Радостный" },
+  { id: "calm", label: "Спокойный" },
+  { id: "neutral", label: "Нейтральный" },
+  { id: "tired", label: "Уставший" },
+  { id: "anxious", label: "Тревожный" },
 ];
+
+const getMoodIcon = (mood: string) => {
+  const map: Record<string, string> = {
+    excited: "emodjis/excited.svg",
+    happy: "emodjis/happy.svg",
+    calm: "emodjis/calm.svg",
+    neutral: "emodjis/neutral.svg",
+    tired: "emodjis/tired.svg",
+    anxious: "emodjis/anxious.svg",
+  };
+  const rel = map[mood] || "emodjis/neutral.svg";
+  return `${import.meta.env.BASE_URL}${rel}`;
+};
 
 export function AddNote({ onClose, onSave }: AddNoteProps) {
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
@@ -117,11 +130,7 @@ export function AddNote({ onClose, onSave }: AddNoteProps) {
               }`}
               style={{ fontFamily: 'var(--font-main)' }}
             >
-              <div
-                className="w-7 h-7 flex items-center justify-center text-lg text-[20px]"
-              >
-                {mood.emoji}
-              </div>
+              <img src={getMoodIcon(mood.id)} alt="" className="w-7 h-7" />
               <span className="text-[15px] leading-[20px] font-bold">{mood.label}</span>
             </button>
           ))}

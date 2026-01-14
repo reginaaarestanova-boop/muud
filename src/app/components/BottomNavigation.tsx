@@ -118,17 +118,17 @@ function Frame({ isActive = false }: { isActive?: boolean }) {
       <div className="absolute left-0 size-[24px] top-0">
         <div className="absolute inset-[1.43%_3.51%_9.55%_3.51%]">
           <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 22.3148 21.3648">
-            <path 
-              d={svgPaths.p19a91100} 
+            <path
+              d={svgPaths.p19a91100}
               fill={bodyFillDark}
               className="light:hidden"
-              id="Polygon 1" 
+              id="Polygon 1"
             />
-            <path 
-              d={svgPaths.p19a91100} 
+            <path
+              d={svgPaths.p19a91100}
               fill={bodyFillLight}
               className="hidden light:block"
-              id="Polygon 1 Light" 
+              id="Polygon 1 Light"
             />
           </svg>
         </div>
@@ -166,10 +166,10 @@ function TodayTab({ isActive, onClick }: { isActive: boolean; onClick: () => voi
 function Icon2({ isActive = false }: { isActive?: boolean }) {
   return (
     <Icon>
-      <path 
-        d={svgPaths.p1c5d50c0} 
+      <path
+        d={svgPaths.p1c5d50c0}
         className={isActive ? "fill-black" : "fill-white fill-opacity-40 light:fill-black light:fill-opacity-40"}
-        id="Union" 
+        id="Union"
       />
     </Icon>
   );
@@ -187,10 +187,10 @@ function HistoryTab({ isActive, onClick }: { isActive: boolean; onClick: () => v
 function Icon3({ isActive = false }: { isActive?: boolean }) {
   return (
     <Icon>
-      <path 
-        d={svgPaths.p17242c00} 
+      <path
+        d={svgPaths.p17242c00}
         className={isActive ? "fill-black" : "fill-white fill-opacity-40 light:fill-black light:fill-opacity-40"}
-        id="Subtract" 
+        id="Subtract"
       />
     </Icon>
   );
@@ -207,7 +207,7 @@ function SettingsTab({ isActive, onClick }: { isActive: boolean; onClick: () => 
 
 export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-10 pointer-events-none">
+    <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
       <div className="absolute bottom-0 left-0 right-0 h-[120px] bg-gradient-to-b from-transparent to-background pointer-events-none" />
       <div className="w-full max-w-[375px] mx-auto px-[16px] pb-[16px] relative">
         <div className="basis-0 bg-card grow min-h-px min-w-px relative rounded-[28px] shrink-0 w-full">

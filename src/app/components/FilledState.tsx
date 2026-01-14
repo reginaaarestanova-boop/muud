@@ -16,25 +16,26 @@ interface FilledStateProps {
   onEdit: () => void;
 }
 
-const getMoodFace = (mood: string) => {
-  const emojiMap: Record<string, string> = {
-    happy: "😀",
-    excited: "😍",
-    neutral: "😐",
-    calm: "🙂",
-    tired: "😒",
-    anxious: "😖",
+const getMoodIcon = (mood: string) => {
+  const map: Record<string, string> = {
+    happy: "emodjis/happy.svg",
+    excited: "emodjis/excited.svg",
+    neutral: "emodjis/neutral.svg",
+    calm: "emodjis/calm.svg",
+    tired: "emodjis/tired.svg",
+    anxious: "emodjis/anxious.svg",
   };
-  return emojiMap[mood] || "😐";
+  const rel = map[mood] || "emodjis/neutral.svg";
+  return `${import.meta.env.BASE_URL}${rel}`;
 };
 
 const getSleepInfo = (hours: number) => {
   if (hours >= 1 && hours <= 4) {
-    return { label: "Уставший", emoji: "😒" };
+    return { label: "Уставший", icon: `${import.meta.env.BASE_URL}sleep-emotion/tired.svg` };
   } else if (hours > 4 && hours < 7) {
-    return { label: "Нейтральный", emoji: "😐" };
+    return { label: "Нейтральный", icon: `${import.meta.env.BASE_URL}sleep-emotion/normal.svg` };
   } else {
-    return { label: "Отдохнувший", emoji: "🙂" };
+    return { label: "Отдохнувший", icon: `${import.meta.env.BASE_URL}sleep-emotion/rested.svg` };
   }
 };
 
@@ -88,8 +89,6 @@ function AnimatedGradientBg() {
 }
 
 export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
-  const moodIds = (entry.moods && entry.moods.length > 0) ? entry.moods.slice(0, 3) : (entry.mood ? [entry.mood] : []);
-  const faces = moodIds.map(getMoodFace);
   const sleepInfo = getSleepInfo(entry.sleep);
 
   return (
@@ -110,7 +109,7 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
           }}
         >
           <AnimatedGradientBg />
-          <span className="relative z-10">«{entry.summary}»</span>
+          <span className="relative z-10">{entry.summary}</span>
           <style>{`
             @keyframes summary-gradient-float-1 {
               0%, 100% {
@@ -204,7 +203,7 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
           <div className="flex flex-col items-end">
             <div className="flex items-center gap-2">
               <span className="text-lg" style={{ fontFamily: 'var(--font-main)' }}>{entry.sleep} часов</span>
-              <span className="text-xl">{sleepInfo.emoji}</span>
+              <img src={sleepInfo.icon} alt="" className="w-6 h-6" />
             </div>
             <div className="text-sm text-muted-foreground" style={{ fontFamily: 'var(--font-main)' }}>{sleepInfo.label}</div>
           </div>
@@ -215,44 +214,27 @@ export function FilledState({ entry, selectedDate, onEdit }: FilledStateProps) {
           {/* Mood Section */}
           <div className="rounded-3xl p-5 mb-[2px] flex flex-col items-center gap-2 bg-muted/20 light:bg-[#F3EADF] overflow-hidden">
             {/* Mood Emojis (cluster up to 3) */}
-            {faces.length <= 1 ? (
-              <span className="text-[96px] leading-none">{faces[0] ?? getMoodFace('neutral')}</span>
-            ) : (
-              <div className="relative w-[140px] h-[120px]">
-                {/* Top large */}
-                {faces[0] && (
-                  <span
-                    className="absolute text-[80px] leading-none"
-                    style={{ left: "50%", top: "0px", transform: "translateX(-50%)", zIndex: 30 }}
-                  >
-                    {faces[0]}
-                  </span>
-                )}
-                {/* Bottom left */}
-                {faces[1] && (
-                  <span
-                    className="absolute text-[56px] leading-none"
-                    style={{ left: "10px", bottom: "4px", zIndex: 20,transform: rotate(-13deg); }}
-                  >
-                    {faces[1]}
-                  </span>
-                )}
-                {/* Bottom right */}
-                {faces[2] && (
-                  <span
-                    className="absolute text-[56px] leading-none"
-                    style={{ right: "10px", bottom: "12px", zIndex: 10,transform: rotate(30deg) }}
-                  >
-                    {faces[2]}
-                  </span>
-                )}
-              </div>
-            )}
+            {(() => {
+              const moodIds = (entry.moods && entry.moods.length > 0) ? entry.moods.slice(0, 3) : (entry.mood ? [entry.mood] : []);
+              const icons = moodIds.map(getMoodIcon);
+              if (icons.length <= 1) {
+                return <img src={icons[0] ?? getMoodIcon('neutral')} alt="" className="w-[96px] h-[96px]" />;
+              }
+              return (
+                <div className="relative w-[140px] h-[120px]">
+                  {icons[0] && (
+                    <img src={icons[0]} alt="" className="absolute" style={{ left: "50%", top: "0px", transform: "translateX(-50%)", zIndex: 30 }} width={80} height={80} />
+                  )}
+                  {icons[1] && (
+                    <img src={icons[1]} alt="" className="absolute" style={{ left: "10px", bottom: "4px", zIndex: 20 }} width={56} height={56} />
+                  )}
+                  {icons[2] && (
+                    <img src={icons[2]} alt="" className="absolute" style={{ right: "10px", bottom: "12px", zIndex: 10 }} width={56} height={56} />
+                  )}
+                </div>
+              );
+            })()}
 
-            {/* Mood Label */}
-            <div className="text-[15px] text-center tracking-[0.4px] leading-[24px]" style={{ fontFamily: 'var(--font-main)' }}>
-              {entry.moodLabel}
-            </div>
           </div>
 
           {/* Diary Text Section */}

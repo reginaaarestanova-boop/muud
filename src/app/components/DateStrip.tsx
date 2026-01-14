@@ -17,8 +17,18 @@ const formatDate = (date: Date) => {
 const getMonthName = (month: number) =>
   ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"][month];
 
-const getMoodEmoji = (mood: string) =>
-  ({ happy:"😀", excited:"😍", neutral:"😐", calm:"🙂", tired:"😒", anxious:"😖" } as Record<string,string>)[mood] || "😐";
+const getMoodIcon = (mood: string) => {
+  const map: Record<string, string> = {
+    happy: "emodjis/happy.svg",
+    excited: "emodjis/excited.svg",
+    neutral: "emodjis/neutral.svg",
+    calm: "emodjis/calm.svg",
+    tired: "emodjis/tired.svg",
+    anxious: "emodjis/anxious.svg",
+  };
+  const rel = map[mood] || "emodjis/neutral.svg";
+  return `${import.meta.env.BASE_URL}${rel}`;
+};
 
 const INITIAL_RANGE = 30;
 const LOAD_STEP = 20;
@@ -34,6 +44,7 @@ export function DateStrip({
 
   const isLoadingRef = useRef(false);
   const didInitScrollRef = useRef(false);
+  const lastSelectedDateRef = useRef<string | null>(null);
 
   const [range, setRange] = useState({ start: -INITIAL_RANGE, end: INITIAL_RANGE });
   const [showLeftFade, setShowLeftFade] = useState(false);
@@ -51,22 +62,43 @@ export function DateStrip({
     return arr;
   }, [selectedDate, range]);
 
-  // ✅ одноразовое центрирование при первом рендере
+  // ✅ центрирование при первом рендере и при изменении selectedDate
   useLayoutEffect(() => {
-    if (didInitScrollRef.current) return;
-
-    requestAnimationFrame(() => {
+    const scrollToSelected = () => {
       const container = scrollRef.current;
       const item = itemRefs.current.get(selectedDate);
-      if (!container || !item) return;
+      if (!container || !item || item.offsetWidth === 0) return false;
 
-      container.scrollLeft =
-        item.offsetLeft -
-        container.clientWidth / 2 +
-        item.offsetWidth / 2;
+      const targetScroll = item.offsetLeft - container.clientWidth / 2 + item.offsetWidth / 2;
+      container.scrollLeft = targetScroll;
+      return true;
+    };
 
-      didInitScrollRef.current = true;
-    });
+    // Если это первая инициализация или selectedDate изменился
+    const isFirstInit = !didInitScrollRef.current;
+    const dateChanged = lastSelectedDateRef.current !== selectedDate;
+
+    if (!isFirstInit && !dateChanged) return;
+
+    // Пробуем несколько раз с задержками для гарантии рендера
+    const attemptScroll = (attempt = 0) => {
+      if (attempt > 5) {
+        if (isFirstInit) didInitScrollRef.current = true;
+        lastSelectedDateRef.current = selectedDate;
+        return;
+      }
+
+      requestAnimationFrame(() => {
+        if (scrollToSelected()) {
+          if (isFirstInit) didInitScrollRef.current = true;
+          lastSelectedDateRef.current = selectedDate;
+        } else {
+          setTimeout(() => attemptScroll(attempt + 1), 50);
+        }
+      });
+    };
+
+    attemptScroll();
   }, [dates.length, selectedDate]);
 
   // ✅ infinite scroll
@@ -178,38 +210,23 @@ export function DateStrip({
                       entry.moods && entry.moods.length > 0
                         ? entry.moods.slice(0, 3)
                         : (entry.mood ? [entry.mood] : []);
-                    const faces = moodIds.map(getMoodEmoji);
+                    const faces = moodIds.map(getMoodIcon);
                     if (faces.length <= 1) {
-                      return <span className="text-[28px] leading-none">{faces[0] ?? getMoodEmoji("neutral")}</span>;
+                      return <img src={faces[0] ?? getMoodIcon("neutral")} alt="" className="w-7 h-7" />;
                     }
                     return (
                       <div className="relative w-[40px] h-[36px] overflow-hidden">
                         {/* Top/front */}
                         {faces[0] && (
-                          <span
-                            className="absolute text-[24px] leading-none"
-                            style={{ left: "50%", top: "3px", transform: "translateX(-50%)", zIndex: 30 }}
-                          >
-                            {faces[0]}
-                          </span>
+                          <img src={faces[0]} alt="" className="absolute" style={{ left: "50%", top: "3px", transform: "translateX(-50%)", zIndex: 30 }} width={24} height={24} />
                         )}
                         {/* Back left */}
                         {faces[1] && (
-                          <span
-                            className="absolute text-[18px] leading-none"
-                            style={{ left: "0px", bottom: "2px", zIndex: 20,transform: rotate(-13deg) }}
-                          >
-                            {faces[1]}
-                          </span>
+                          <img src={faces[1]} alt="" className="absolute" style={{ left: "0px", bottom: "0px", zIndex: 20, transform: "rotate(-13deg)" }} width={18} height={18} />
                         )}
                         {/* Back right */}
                         {faces[2] && (
-                          <span
-                            className="absolute text-[18px] leading-none"
-                            style={{ right: "0px", bottom: "2px", zIndex: 10, transform: rotate(30deg) }}
-                          >
-                            {faces[2]}
-                          </span>
+                          <img src={faces[2]} alt="" className="absolute" style={{ right: "0px", bottom: "0px", zIndex: 10, transform: "rotate(30deg)" }} width={18} height={18} />
                         )}
                       </div>
                     );

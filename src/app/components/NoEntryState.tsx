@@ -18,9 +18,9 @@ const dailyTips = [
 
 function AnimatedGradientBg() {
   return (
-    <div className="absolute h-[145px] left-1/2 top-[calc(50%+19.5px)] translate-x-[-50%] translate-y-[-50%] w-[365px]">
+    <div className="absolute h-[200px] left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%] w-[365px]">
       <div className="absolute inset-0">
-        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 365 145">
+        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 365 200">
           <defs>
             <filter colorInterpolationFilters="sRGB" filterUnits="userSpaceOnUse" height="557" id="filter0_f_animated" width="821" x="-228" y="-226">
               <feFlood floodOpacity="0" result="BackgroundImageFix" />
@@ -43,11 +43,11 @@ function AnimatedGradientBg() {
               <feGaussianBlur result="effect1_foregroundBlur" stdDeviation="12" />
             </filter>
             <clipPath id="clip0_animated">
-              <rect fill="white" height="145" width="365" />
+              <rect fill="white" height="200" width="365" />
             </clipPath>
           </defs>
           <g clipPath="url(#clip0_animated)">
-            <rect className="fill-black light:fill-[#F3EADF]" height="145" width="365" />
+            <rect className="fill-black light:fill-[#F3EADF]" height="200" width="365" />
             <g filter="url(#filter0_f_animated)" className="animate-gradient-1">
               <rect fill="#F3EADF" height="157" width="421" x="-28" y="-26" />
             </g>
@@ -159,31 +159,21 @@ export function NoEntryState({ selectedDate }: NoEntryStateProps) {
   const tip = dailyTips[tipIndex];
 
   return (
-    <div className="flex flex-col gap-[2px] w-full flex-1">
-      {/* Tip Card with Animated Gradient */}
-      <div className="bg-card rounded-[28px] w-full overflow-hidden">
-        <div className="flex flex-col gap-[4px] px-[20px] py-[16px] relative items-center">
+    <div className="flex flex-col gap-[2px] w-full">
+      {/* Tip Card with Animated Gradient — fixed height 200px */}
+      <div className="bg-card rounded-[28px] w-full overflow-hidden h-[200px]">
+        <div className="flex flex-col gap-[6px] px-[20px] py-[16px] relative items-center justify-center h-full">
           <AnimatedGradientBg />
-          <div className="text-[13px] leading-[17px] tracking-[0.4px] relative z-10 text-center" style={{ fontFamily: 'var(--font-main)' }}>
-            Совет дня
+          <div className="text-[13px] leading-[17px] tracking-[0.4px] relative z-10 text-center text-black" style={{ fontFamily: 'var(--font-main)' }}>
+            Совет на день
           </div>
-          <p 
-            className="text-foreground text-[15px] leading-[20px] tracking-[0.4px] relative z-10 text-center"
+          <p
+            className="text-black text-[15px] leading-[20px] tracking-[0.4px] relative z-10 text-center"
             style={{ fontFamily: 'var(--font-main)' }}
           >
-            Попробуй медитацию перед сном
+            {tip}
           </p>
         </div>
-      </div>
-
-      {/* No Entry Card - Takes full remaining height */}
-      <div className="bg-card rounded-[28px] w-full overflow-hidden flex items-center justify-center flex-1">
-        <p 
-          className="text-card-foreground text-[24px] leading-[28px] tracking-[0.4px] text-center"
-          style={{ fontFamily: 'var(--font-main)' }}
-        >
-          В этот день<br />записей нет
-        </p>
       </div>
     </div>
   );

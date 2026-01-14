@@ -23,25 +23,26 @@ interface HistoryProps {
   onShowingDetail?: (isShowing: boolean) => void;
 }
 
-const getMoodFace = (mood: string) => {
-  const emojiMap: Record<string, string> = {
-    happy: "😀",
-    excited: "😍",
-    neutral: "😐",
-    calm: "🙂",
-    tired: "😒",
-    anxious: "😖",
+const getMoodIcon = (mood: string) => {
+  const map: Record<string, string> = {
+    happy: "emodjis/happy.svg",
+    excited: "emodjis/excited.svg",
+    neutral: "emodjis/neutral.svg",
+    calm: "emodjis/calm.svg",
+    tired: "emodjis/tired.svg",
+    anxious: "emodjis/anxious.svg",
   };
-  return emojiMap[mood] || "😐";
+  const rel = map[mood] || "emodjis/neutral.svg";
+  return `${import.meta.env.BASE_URL}${rel}`;
 };
 
 const getSleepInfo = (hours: number) => {
   if (hours >= 1 && hours <= 4) {
-    return { label: "Уставший", emoji: "😒" };
+    return { label: "Уставший", icon: `${import.meta.env.BASE_URL}sleep-emotion/tired.svg` };
   } else if (hours > 4 && hours < 7) {
-    return { label: "Нейтральный", emoji: "😐" };
+    return { label: "Нейтральный", icon: `${import.meta.env.BASE_URL}sleep-emotion/normal.svg` };
   } else {
-    return { label: "Отдохнувший", emoji: "🙂" };
+    return { label: "Отдохнувший", icon: `${import.meta.env.BASE_URL}sleep-emotion/rested.svg` };
   }
 };
 
@@ -63,7 +64,7 @@ export function History({ diaryData, onEdit, onDelete, onShowingDetail }: Histor
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const [swipedIndex, setSwipedIndex] = useState<number | null>(null);
-  const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const [pressTimer, setPressTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [deleteConfirmDate, setDeleteConfirmDate] = useState<string | null>(null);
 
@@ -172,7 +173,7 @@ export function History({ diaryData, onEdit, onDelete, onShowingDetail }: Histor
         <div className="flex flex-col gap-6 w-full">
           {entries.map((entry, index) => {
             const moodIds = (entry.moods && entry.moods.length > 0) ? entry.moods.slice(0, 3) : (entry.mood ? [entry.mood] : []);
-            const faces = moodIds.map(getMoodFace);
+            const faces = moodIds.map(getMoodIcon);
             const sleepInfo = getSleepInfo(entry.sleep);
             const isRevealed = swipedIndex === index;
 
@@ -222,48 +223,31 @@ export function History({ diaryData, onEdit, onDelete, onShowingDetail }: Histor
                     {/* Mood Avatar (cluster) */}
                     <div className="bg-card rounded-3xl p-5 flex items-center justify-center flex-shrink-0 max-h-[72px] overflow-hidden">
                       {faces.length <= 1 ? (
-                        <span className="text-[40px] leading-none">{faces[0] ?? getMoodFace('neutral')}</span>
+                        <img src={faces[0] ?? getMoodIcon('neutral')} alt="" className="w-10 h-10" />
                       ) : (
                         <div className="relative w-[62px] h-[54px] overflow-hidden">
                           {/* Top large */}
                           {faces[0] && (
-                            <span
-                              className="absolute text-[34px] leading-none"
-                              style={{ left: "50%", top: "-4px", transform: "translateX(-50%)", zIndex: 30 }}
-                            >
-                              {faces[0]}
-                            </span>
+                            <img src={faces[0]} alt="" className="absolute" style={{ left: "50%", top: "0px", transform: "translateX(-50%)", zIndex: 30 }} width={34} height={34} />
                           )}
                           {/* Bottom left */}
                           {faces[1] && (
-                            <span
-                              className="absolute text-[24px] leading-none"
-                              style={{ left: "-3px", bottom: "-3px", zIndex: 20 }}
-                            >
-                              {faces[1]}
-                            </span>
+                            <img src={faces[1]} alt="" className="absolute" style={{ left: "12px", bottom: "4px", zIndex: 20 }} width={24} height={24} />
                           )}
                           {/* Bottom right */}
                           {faces[2] && (
-                            <span
-                              className="absolute text-[24px] leading-none"
-                              style={{ right: "-3px", bottom: "-3px", zIndex: 10 }}
-                            >
-                              {faces[2]}
-                            </span>
+                            <img src={faces[2]} alt="" className="absolute" style={{ right: "10px", bottom: "12px", zIndex: 10 }} width={24} height={24} />
                           )}
                         </div>
                       )}
                     </div>
 
                     {/* Info Card */}
-                    <div className="flex-1 bg-card rounded-3xl p-5 flex items-center justify-between max-h-[72px]">
-                      <div className="text-[13px] font-normal" style={{ fontFamily: 'var(--font-main)' }}>{entry.moodLabel}</div>
-
+                    <div className="flex-1 bg-card rounded-3xl p-5 flex items-center justify-end max-h-[72px]">
                       <div className="flex flex-col items-end gap-1">
                         <div className="flex items-center gap-2">
                           <span className="text-[15px] font-bold" style={{ fontFamily: 'var(--font-main)' }}>{entry.sleep} часов</span>
-                          <span className="text-xl">{sleepInfo.emoji}</span>
+                          <img src={sleepInfo.icon} alt="" className="w-5 h-5" />
                         </div>
                         <div className="text-[11px] text-muted-foreground" style={{ fontFamily: 'var(--font-main)' }}>{sleepInfo.label}</div>
                       </div>
