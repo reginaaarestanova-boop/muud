@@ -218,15 +218,36 @@ export function DateStrip({
                       <div className="relative w-[40px] h-[36px] overflow-hidden">
                         {/* Top/front */}
                         {faces[0] && (
-                          <img src={faces[0]} alt="" className="absolute" style={{ left: "50%", top: "3px", transform: "translateX(-50%)", zIndex: 30 }} width={24} height={24} />
+                          <img
+                            src={faces[0]}
+                            alt=""
+                            className="absolute"
+                            style={{ left: "50%", top: "3px", transform: "translateX(-50%)", zIndex: 30 }}
+                            width={24}
+                            height={24}
+                          />
                         )}
                         {/* Back left */}
                         {faces[1] && (
-                          <img src={faces[1]} alt="" className="absolute" style={{ left: "0px", bottom: "0px", zIndex: 20, transform: "rotate(-13deg)" }} width={18} height={18} />
+                          <img
+                            src={faces[1]}
+                            alt=""
+                            className="absolute"
+                            style={{ left: "0px", bottom: "0px", zIndex: 20, transform: "rotate(-13deg)" }}
+                            width={18}
+                            height={18}
+                          />
                         )}
                         {/* Back right */}
                         {faces[2] && (
-                          <img src={faces[2]} alt="" className="absolute" style={{ right: "0px", bottom: "0px", zIndex: 10, transform: "rotate(30deg)" }} width={18} height={18} />
+                          <img
+                            src={faces[2]}
+                            alt=""
+                            className="absolute"
+                            style={{ right: "0px", bottom: "0px", zIndex: 10, transform: "rotate(30deg)" }}
+                            width={18}
+                            height={18}
+                          />
                         )}
                       </div>
                     );
