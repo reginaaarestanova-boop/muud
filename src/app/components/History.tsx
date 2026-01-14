@@ -178,7 +178,7 @@ export function History({ diaryData, onEdit, onDelete, onShowingDetail }: Histor
             const isRevealed = swipedIndex === index;
 
             return (
-              <div key={entry.date} className="flex flex-col gap-1">
+              <div key={entry.date} className="flex flex-col gap-1 bg-transparent">
                 {/* Date */}
                 <p className="text-sm text-muted-foreground text-center mb-1" style={{ fontFamily: 'var(--font-main)' }}>
                   {formatDate(entry.date)}
@@ -186,7 +186,7 @@ export function History({ diaryData, onEdit, onDelete, onShowingDetail }: Histor
 
                 {/* Swipeable Container */}
                 <div
-                  className="relative overflow-hidden rounded-3xl"
+                  className="relative overflow-hidden rounded-3xl bg-transparent"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Action Buttons (Behind) */}
@@ -221,7 +221,7 @@ export function History({ diaryData, onEdit, onDelete, onShowingDetail }: Histor
                     onClick={() => handleCardClick(entry.date)}
                   >
                     {/* Mood Avatar (cluster) */}
-                    <div className="bg-card rounded-3xl p-5 flex items-center justify-center flex-shrink-0 max-h-[72px] overflow-hidden">
+                    <div className="bg-card rounded-3xl p-5 flex items-center justify-center flex-shrink-0 h-[72px] overflow-hidden">
                       {faces.length <= 1 ? (
                         <img src={faces[0] ?? getMoodIcon('neutral')} alt="" className="w-10 h-10" />
                       ) : (
@@ -243,13 +243,11 @@ export function History({ diaryData, onEdit, onDelete, onShowingDetail }: Histor
                     </div>
 
                     {/* Info Card */}
-                    <div className="flex-1 bg-card rounded-3xl p-5 flex items-center justify-end max-h-[72px]">
-                      <div className="flex flex-col items-end gap-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[15px] font-bold" style={{ fontFamily: 'var(--font-main)' }}>{entry.sleep} часов</span>
-                          <img src={sleepInfo.icon} alt="" className="w-5 h-5" />
-                        </div>
+                    <div className="flex-1 bg-card rounded-3xl p-5 flex items-center justify-between h-[72px]">
+                      <span className="text-[15px] font-bold" style={{ fontFamily: 'var(--font-main)' }}>{entry.sleep} часов</span>
+                      <div className="flex items-center gap-2">
                         <div className="text-[11px] text-muted-foreground" style={{ fontFamily: 'var(--font-main)' }}>{sleepInfo.label}</div>
+                        <img src={sleepInfo.icon} alt="" className="w-5 h-5" />
                       </div>
                     </div>
                   </div>
